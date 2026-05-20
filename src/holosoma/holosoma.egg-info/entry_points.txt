@@ -1,0 +1,3 @@
+[holosoma.bridge]
+booster = holosoma.bridge.booster:BoosterSdk2Bridge
+unitree = holosoma.bridge.unitree:UnitreeSdk2Bridge
