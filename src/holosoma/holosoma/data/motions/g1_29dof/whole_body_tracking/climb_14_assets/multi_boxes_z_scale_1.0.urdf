@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot name="climb_14_boxes">
+  <link name="multi_boxes_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="box_models/box1.obj" scale="0.585938 0.585938 0.585938"/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="box_models/box2.obj" scale="0.7415730337078652 0.7415730337078652 0.7415730337078652"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="box_models/box1.obj" scale="0.585938 0.585938 0.585938"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="box_models/box2.obj" scale="0.7415730337078652 0.7415730337078652 0.7415730337078652"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+</robot>

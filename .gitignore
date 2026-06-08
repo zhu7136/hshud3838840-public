@@ -1,0 +1,26 @@
+
+# Build artifacts
+*.whl
+*.tar.gz
+*.zip
+*.egg-info/
+*.egg
+
+# Logs
+logs/
+*.log
+MUJOCO_LOG.TXT
+
+# Cache
+__pycache__/
+*.pyc
+*.pyo
+.claude/scheduled_tasks.lock
+
+# Large model files
+*.pt
+*.gif
+*.png
+
+# Temp files
+2026-05-21-*.txt
