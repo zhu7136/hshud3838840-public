@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from typing import Any, List
 
 import mujoco
@@ -14,6 +15,23 @@ from holosoma.config_types.robot import RobotConfig
 from holosoma.config_types.simulator import MujocoXMLFilterCfg, SimulatorConfig
 from holosoma.managers.terrain.base import TerrainTermBase
 from holosoma.utils.module_utils import get_holosoma_root
+
+
+SHELL_THICKNESS: float = 0.005
+"""Thickness (half-size) for thin-shell obstacle collision boxes (meters).
+Simulates OBJ surface collision instead of solid volume collision."""
+
+
+@dataclass(frozen=True)
+class ObstacleBox:
+    """Axis-aligned bounding box for a detected obstacle."""
+
+    pos: list[float]
+    """Center position [x, y, z] of the box."""
+    size: list[float]
+    """Half-sizes [sx, sy, sz] of the box."""
+    z_max: float
+    """Maximum Z coordinate of the obstacle (top surface)."""
 
 
 class MujocoSceneManager:
@@ -162,7 +180,8 @@ class MujocoSceneManager:
             # Use heightfield to reduce penetrations (vs. trimesh/geom mesh)
             geom = self._create_hfield(terrain_state)
         elif terrain_state.mesh_type in ["load_obj"]:
-            geom = self._create_trimesh(terrain_state)
+            threshold = terrain_state._cfg.ground_z_threshold if hasattr(terrain_state, '_cfg') else 0.01
+            geom = self._create_trimesh(terrain_state, ground_z_threshold=threshold)
         elif terrain_state.mesh_type is None:
             logger.info("Terrain is none")
         else:
@@ -206,8 +225,122 @@ class MujocoSceneManager:
             solref=[0.001, 1],  # 2 elements: [timeconst, dampratio]
         )
 
-    def _create_trimesh(self, terrain_state: TerrainTermBase) -> mujoco.MjSpec.Geom:
-        """Create MuJoCo mesh terrain matching shared Terrain class behavior."""
+    def _extract_obstacles_from_mesh(
+        self,
+        vertices: np.ndarray,
+        faces: np.ndarray,
+        ground_z_threshold: float = 0.01,
+    ) -> list[ObstacleBox]:
+        """Extract obstacle bounding boxes from mesh using face-connected components.
+
+        Identifies faces whose vertices are all above the ground threshold,
+        groups them into connected components via face adjacency, and computes
+        axis-aligned bounding boxes for each component.
+
+        Parameters
+        ----------
+        vertices : np.ndarray
+            Mesh vertices array of shape (N, 3).
+        faces : np.ndarray
+            Mesh faces array of shape (M, 3), each row is vertex indices.
+        ground_z_threshold : float
+            Minimum Z height to consider as obstacle (above ground plane).
+
+        Returns
+        -------
+        list[ObstacleBox]
+            List of detected obstacle bounding boxes.
+        """
+        if faces.size == 0:
+            return []
+
+        # A face is an obstacle face if ALL its vertices are above the threshold
+        face_max_z = vertices[faces, 2].max(axis=1)
+        obstacle_face_mask = face_max_z > ground_z_threshold
+        obstacle_face_indices = np.where(obstacle_face_mask)[0]
+
+        if obstacle_face_indices.size == 0:
+            return []
+
+        # Build face adjacency: two faces are adjacent if they share an edge (2 vertices)
+        # Create edge -> face mapping for obstacle faces only
+        edge_to_faces: dict[tuple[int, int], list[int]] = {}
+        for fi in obstacle_face_indices:
+            face_verts = sorted(faces[fi])
+            edges = [
+                (face_verts[0], face_verts[1]),
+                (face_verts[0], face_verts[2]),
+                (face_verts[1], face_verts[2]),
+            ]
+            for edge in edges:
+                edge_to_faces.setdefault(edge, []).append(fi)
+
+        # Union-find for connected components
+        parent: dict[int, int] = {}
+
+        def find(x: int) -> int:
+            while parent.get(x, x) != x:
+                parent[x] = parent.get(parent[x], parent[x])
+                x = parent[x]
+            return x
+
+        def union(a: int, b: int) -> None:
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+
+        # Merge faces that share an edge
+        for face_list in edge_to_faces.values():
+            for i in range(1, len(face_list)):
+                union(face_list[0], face_list[i])
+
+        # Group faces by connected component
+        components: dict[int, list[int]] = {}
+        for fi in obstacle_face_indices:
+            root = find(fi)
+            components.setdefault(root, []).append(fi)
+
+        # For each component, collect all vertices and compute bbox
+        obstacles: list[ObstacleBox] = []
+        for face_list in components.values():
+            vert_indices = np.unique(faces[face_list].ravel())
+            comp_vertices = vertices[vert_indices]
+
+            mins = comp_vertices.min(axis=0)
+            maxs = comp_vertices.max(axis=0)
+            center = (mins + maxs) / 2.0
+            half_size = (maxs - mins) / 2.0
+
+            # Filter out very small obstacles (noise)
+            if half_size[0] < 0.01 or half_size[1] < 0.01:
+                continue
+
+            # Filter out ground-level slabs (z_range too small).
+            # Ground plane handles floor collision; only keep elevated obstacles.
+            z_range = maxs[2] - mins[2]
+            if z_range < 0.15:
+                continue
+
+            # Use full-height box (ground to top) instead of thin shell.
+            # Thin shells cause unstable collision; full-height boxes provide
+            # stable collision surfaces for both ground slabs and obstacles.
+            full_center_z = maxs[2] / 2.0
+            full_half_z = maxs[2] / 2.0
+            obstacles.append(ObstacleBox(
+                pos=[float(center[0]), float(center[1]), float(full_center_z)],
+                size=[float(half_size[0]), float(half_size[1]), float(full_half_z)],
+                z_max=float(maxs[2]),
+            ))
+
+        return obstacles
+
+    def _create_trimesh(self, terrain_state: TerrainTermBase, ground_z_threshold: float = 0.01) -> mujoco.MjSpec.Geom:
+        """Create MuJoCo mesh terrain matching shared Terrain class behavior.
+
+        For load_obj terrains, the mesh is visual-only. Collision is handled by
+        a ground plane at Z=0 and auto-extracted box geoms for obstacles, since
+        MuJoCo's mesh collision does not work well with thin-shell OBJ files.
+        """
 
         if terrain_state.mesh is None:
             raise ValueError("Terrain mesh data is required when using trimesh terrain type.")
@@ -218,26 +351,39 @@ class MujocoSceneManager:
         if vertices.size == 0 or faces.size == 0:
             raise ValueError("Terrain mesh is empty and cannot be used to create a mesh geom.")
 
-        mesh_spec = self.world_spec.add_mesh(name="terrain")
-        mesh_spec.uservert = vertices.flatten(order="C")
-        mesh_spec.userface = faces.flatten(order="C")
-        mesh_spec.smoothnormal = False
+        # No visual mesh — only ground plane and obstacle boxes.
 
-        return self.world_spec.worldbody.add_geom(
-            name=terrain_state.name,
-            type=mujoco.mjtGeom.mjGEOM_MESH,
-            meshname=mesh_spec.name,
+        # Ground plane named "floor" — matches robot XML contact pairs
+        # (e.g. <pair geom1="left_foot1_collision" geom2="floor" ...>)
+        vis_geom = self.world_spec.worldbody.add_geom(
+            name="floor",
+            type=mujoco.mjtGeom.mjGEOM_PLANE,
+            size=[0, 0, 0.01],
             pos=[0.0, 0.0, 0.0],
-            material="solid_gray",
-            friction=[
-                # Ignore terrain config until we expose Mujoco-specific parameters
-                0.7,  # reasonable default
-                0.005,  # reasonable default
-                0.001,  # reasonable default
-            ],  # [sliding, torsional, rolling]
+            friction=[0.7, 0.005, 0.001],
             solimp=[0.99, 0.99, 0.01, 0.5, 2],
             solref=[0.001, 1],
+            contype=2,
+            conaffinity=1,
         )
+
+        # Auto-extract obstacles from mesh and generate full-height collision box geoms
+        obstacles = self._extract_obstacles_from_mesh(vertices, faces, ground_z_threshold)
+        for i, obs in enumerate(obstacles):
+            self.world_spec.worldbody.add_geom(
+                name=f"terrain_obstacle_{i}",
+                type=mujoco.mjtGeom.mjGEOM_BOX,
+                size=[obs.size[0], obs.size[1], obs.size[2]],
+                pos=[obs.pos[0], obs.pos[1], obs.pos[2]],
+                rgba=[0.8, 0.2, 0.2, 0.6],  # Red, semi-transparent
+                friction=[0.7, 0.005, 0.001],
+                solimp=[0.99, 0.99, 0.01, 0.5, 2],
+                solref=[0.001, 1],
+                contype=2,
+                conaffinity=1,
+            )
+
+        return vis_geom
 
     def _create_hfield(self, terrain_state: TerrainTermBase) -> mujoco.MjSpec.Geom:
         """Create MuJoCo heightfield terrain from procedural terrain data.
@@ -492,4 +638,7 @@ class MujocoSceneManager:
             Compiled MuJoCo model ready for simulation.
         """
         logger.info("Compiling world model using MjSpec")
+        # Add placeholder keyframe so mj_setKeyframe can be called after compilation
+        # (viewer reset restores to keyframe state if present)
+        self.world_spec.add_key(name="init")
         return self.world_spec.compile()

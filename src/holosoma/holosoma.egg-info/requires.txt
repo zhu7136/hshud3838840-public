@@ -44,7 +44,7 @@ zmq
 importlib_resources
 
 [booster]
-booster_robotics_sdk @ https://github.com/amazon-far/booster_robotics_sdk/releases/download/0.1.0/booster_robotics_sdk-0.1.0-cp311-cp311-linux_x86_64.whl
+booster_robotics_sdk @ https://github.com/amazon-far/booster_robotics_sdk/releases/download/0.1.0/booster_robotics_sdk-0.1.0-cp313-cp313-linux_x86_64.whl
 
 [unitree]
-unitree_sdk2 @ https://github.com/amazon-far/unitree_sdk2/releases/download/0.1.2/unitree_sdk2-0.1.2-cp311-cp311-linux_x86_64.whl
+unitree_sdk2 @ https://github.com/amazon-far/unitree_sdk2/releases/download/0.1.2/unitree_sdk2-0.1.2-cp313-cp313-linux_x86_64.whl

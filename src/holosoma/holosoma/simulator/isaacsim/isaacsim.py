@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from typing import Any
 
 import pathlib
+from pathlib import Path
 import trimesh
 
 from holosoma.config_types.full_sim import FullSimConfig
@@ -209,7 +210,7 @@ class IsaacSim(BaseSimulator):
             angular_damping=robot_asset_cfg.angular_damping,
             max_linear_velocity=robot_asset_cfg.max_linear_velocity,
             max_angular_velocity=robot_asset_cfg.max_angular_velocity,
-            max_depenetration_velocity=1.0,
+            max_depenetration_velocity=10.0,
         )
 
         robot_articulation_props = sim_utils.ArticulationRootPropertiesCfg(
@@ -353,7 +354,7 @@ class IsaacSim(BaseSimulator):
             global_collision_prims.append(terrain_config.prim_path)
         elif terrain_state.mesh_type in ["trimesh", "load_obj"]:
             self.terrain = self.terrain_manager.get_state("locomotion_terrain").terrain
-            visual_material = sim_utils.PreviewSurfaceCfg(diffuse_color=(0.0, 0.0, 0.0))
+            visual_material = sim_utils.PreviewSurfaceCfg(diffuse_color=(1.0, 0.0, 0.0))
             physics_material = sim_utils.RigidBodyMaterialCfg(
                 static_friction=terrain_state.static_friction,
                 dynamic_friction=terrain_state.dynamic_friction,
@@ -367,6 +368,13 @@ class IsaacSim(BaseSimulator):
                 physics_material=physics_material,
                 translation=(0.0, 0.0, 0.0),
             )
+            # Set collision properties for terrain
+            terrain_collision_cfg = sim_utils.CollisionPropertiesCfg(
+                collision_enabled=True,
+                contact_offset=0.02,
+                rest_offset=0.0,
+            )
+            sim_utils.define_collision_properties(f"{terrain_prim_path}/mesh", terrain_collision_cfg)
             global_collision_prims.append(terrain_prim_path)
             print("[INFO] Successfully created custom terrain mesh")
         else:
@@ -400,23 +408,26 @@ class IsaacSim(BaseSimulator):
             # Resolve the object asset urdf path using importlib.resources
             object_asset_urdf_path = resolve_data_file_path(self.robot_config.object.object_urdf_path)
             object_name = "object"  # hardcoded object name
-            object_cfg = RigidObjectCfg(
+            is_fixed = self.robot_config.object.fixed
+            object_cfg = ArticulationCfg(
                 prim_path=f"/World/envs/env_.*/Object",
                 spawn=sim_utils.UrdfFileCfg(
-                    fix_base=False,
+                    fix_base=is_fixed,
                     replace_cylinders_with_capsules=True,
                     asset_path=object_asset_urdf_path,
                     activate_contact_sensors=True,
                     rigid_props=sim_utils.RigidBodyPropertiesCfg(
-                        disable_gravity=False,
+                        disable_gravity=is_fixed,
                         retain_accelerations=False,
                         linear_damping=0.01,
                         angular_damping=0.01,
                         max_linear_velocity=1000.0,
                         max_angular_velocity=1000.0,
-                        max_depenetration_velocity=1.0,
+                        max_depenetration_velocity=10.0,
                     ),
                     articulation_props=sim_utils.ArticulationRootPropertiesCfg(
+                        articulation_enabled=True,
+                        fix_root_link=is_fixed,
                         enabled_self_collisions=True,
                         solver_position_iteration_count=8,
                         solver_velocity_iteration_count=4,
@@ -425,12 +436,13 @@ class IsaacSim(BaseSimulator):
                         gains=sim_utils.UrdfConverterCfg.JointDriveCfg.PDGainsCfg(stiffness=0, damping=0)
                     ),
                 ),
-                init_state=RigidObjectCfg.InitialStateCfg(
+                init_state=ArticulationCfg.InitialStateCfg(
                     pos=(0.0, 0.0, 0.5),
                 ),
+                actuators={},  # No actuators for fixed-base object
             )
-            self._object = RigidObject(object_cfg)
-            self.scene.rigid_objects[object_name] = self._object
+            self._object = Articulation(object_cfg)
+            self.scene.articulations[object_name] = self._object
 
         # add lights
         # light_config = sim_utils.DomeLightCfg(intensity=2000.0, color=(0.98, 0.95, 0.88))
@@ -528,7 +540,11 @@ class IsaacSim(BaseSimulator):
             raise ValueError("scene.scene_files is empty list - remove field or provide scene files")
 
         usd_loader = USDFileLoader(self.sim, self.scene, self.sim_device)
-        scene_collection = usd_loader.load_scene_files(scene_config.scene_files, scene_config.asset_root)
+        # Resolve asset_root path if it's a package-relative path
+        asset_root = scene_config.asset_root
+        if asset_root and not Path(asset_root).is_absolute():
+            asset_root = resolve_data_file_path(asset_root)
+        scene_collection = usd_loader.load_scene_files(scene_config.scene_files, asset_root)
 
         if scene_collection is not None:
             self.scene.rigid_objects["usd_scene_objects"] = scene_collection

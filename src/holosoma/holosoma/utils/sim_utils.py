@@ -428,9 +428,44 @@ class DirectSimulation:
         self.simulator.create_envs(1, env_origins, base_init_state)
         logger.debug("simulator.create_envs() completed")
 
-        # Step 5: Prepare simulation
+        # Step 5: Prepare simulation (sets qpos from robot_config.init_state)
         self.simulator.prepare_sim()
         logger.debug("simulator.prepare_sim() completed")
+
+        # Step 5.1: Sync qpos0 and keyframe with actual spawn position.
+        # prepare_sim() sets qpos from robot_config.init_state; if terrain height
+        # query is enabled we adjust Z first, then always persist to qpos0 + keyframe
+        # so that MuJoCo viewer reset restores the correct position.
+        spawn_cfg = self.config.terrain.terrain_term.spawn
+        if spawn_cfg.query_terrain_height:
+            terrain_state = self.simulator.terrain_manager.get_state("locomotion_terrain")
+            xy = torch.tensor(
+                [self.config.robot.init_state.pos[:2]], device=self.device
+            )  # (1, 2)
+            heights = terrain_state.query_terrain_heights(
+                xy,
+                use_grid_sampling=spawn_cfg.use_grid_sampling,
+                grid_size=spawn_cfg.grid_size,
+                grid_spacing=spawn_cfg.grid_spacing,
+            )
+            robot_base_height = self.config.robot.init_state.pos[2]
+            spawn_z = heights[0] + robot_base_height
+            logger.info(
+                f"Terrain-aware spawn: surface_z={heights[0]:.3f}, "
+                f"base_height={robot_base_height:.3f}, spawn_z={spawn_z:.3f}"
+            )
+            qpos_addr = self.simulator.robot_qpos_addr
+            self.simulator.root_data.qpos[qpos_addr + 2] = spawn_z
+
+        # Always persist current qpos to qpos0 and keyframe so viewer reset works
+        qpos_addr = self.simulator.robot_qpos_addr
+        self.simulator.root_model.qpos0[qpos_addr : qpos_addr + self.simulator.root_model.nq] = (
+            self.simulator.root_data.qpos[: self.simulator.root_model.nq]
+        )
+        if self.simulator.root_model.nkey > 0:
+            import mujoco as _mj
+
+            _mj.mj_setKeyframe(self.simulator.root_model, self.simulator.root_data, 0)
 
         # Step 5.5: Initialize episode (positions virtual gantry, etc.)
         self.simulator.on_episode_start(env_id=0)

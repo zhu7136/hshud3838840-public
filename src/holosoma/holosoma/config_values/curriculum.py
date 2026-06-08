@@ -3,6 +3,7 @@
 from holosoma.config_values.loco.g1.curriculum import g1_29dof_curriculum, g1_29dof_curriculum_fast_sac
 from holosoma.config_values.loco.t1.curriculum import t1_29dof_curriculum, t1_29dof_curriculum_fast_sac
 from holosoma.config_values.wbt.g1.curriculum import g1_29dof_wbt_curriculum
+from holosoma.config_values.wbt.hu_d04.curriculum import hu_d04_31dof_wbt_curriculum
 
 none = None
 
@@ -13,4 +14,5 @@ DEFAULTS = {
     "t1_29dof_fast_sac": t1_29dof_curriculum_fast_sac,
     "g1_29dof_fast_sac": g1_29dof_curriculum_fast_sac,
     "g1_29dof_wbt_curriculum": g1_29dof_wbt_curriculum,
+    "hu_d04_31dof_wbt_curriculum": hu_d04_31dof_wbt_curriculum,
 }

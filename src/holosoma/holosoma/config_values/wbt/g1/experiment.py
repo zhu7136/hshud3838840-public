@@ -1,6 +1,7 @@
 from dataclasses import replace
 
 from holosoma.config_types.experiment import ExperimentConfig, NightlyConfig, TrainingConfig
+from holosoma.config_types.simulator import ObjectPatternConfig, PhysicsConfig, SceneFileConfig
 from holosoma.config_values import (
     action,
     algo,
@@ -191,9 +192,28 @@ g1_29dof_wbt_fast_sac_w_object = replace(
     ),
 )
 
+g1_29dof_wbt_fast_sac_climb = replace(
+    g1_29dof_wbt_fast_sac,
+    robot=replace(
+        robot.g1_29dof,
+        control=replace(
+            robot.g1_29dof.control,
+            action_scale=0.25,
+            action_scales_by_effort_limit_over_p_gain=True,
+        ),
+        asset=replace(robot.g1_29dof.asset, enable_self_collisions=True),
+        init_state=replace(robot.g1_29dof.init_state, pos=[0.0, 0.0, 0.76]),
+    ),
+    simulator=replace(
+        simulator.isaacsim,
+        config=replace(simulator.isaacsim.config, scene=replace(simulator.isaacsim.config.scene, env_spacing=0.0)),
+    ),
+)
+
 __all__ = [
     "g1_29dof_wbt",
     "g1_29dof_wbt_fast_sac",
+    "g1_29dof_wbt_fast_sac_climb",
     "g1_29dof_wbt_fast_sac_w_object",
     "g1_29dof_wbt_w_object",
 ]

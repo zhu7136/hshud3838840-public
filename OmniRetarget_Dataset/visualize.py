@@ -93,7 +93,7 @@ def visualize_robot_object():
 
 
 def visualize_robot_terrain():
-    robot_terrain_files = find_files("robot-terrain", filter="z_scale_1.0")
+    robot_terrain_files = find_files("robot-terrain", filter="climb_14_z_scale_0.8")
     for robot_terrain_file in robot_terrain_files:
         file_name = str(Path(robot_terrain_file).stem)
         print(file_name)

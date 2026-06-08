@@ -1,4 +1,4 @@
-from holosoma.config_types.terrain import MeshType, TerrainManagerCfg, TerrainTermCfg
+from holosoma.config_types.terrain import MeshType, SpawnCfg, TerrainManagerCfg, TerrainTermCfg
 
 terrain_locomotion_plane = TerrainManagerCfg(
     terrain_term=TerrainTermCfg(
@@ -56,6 +56,9 @@ terrain_load_obj = TerrainManagerCfg(
         mesh_type=MeshType.LOAD_OBJ,
         func="holosoma.managers.terrain.terms.locomotion:TerrainLocomotion",
         obj_file_path="holosoma/data/motions/g1_29dof/whole_body_tracking/terrain_parkour.obj",
+        spawn=SpawnCfg(
+            query_terrain_height=False,
+        ),
     )
 )
 

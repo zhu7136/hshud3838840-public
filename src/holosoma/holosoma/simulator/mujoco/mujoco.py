@@ -660,6 +660,11 @@ class MuJoCo(BaseSimulator):
 
         self._set_robot_initial_state()
 
+        # Save initial state as keyframe so viewer reset restores correct position
+        # (mj_resetData restores to keyframe if present, otherwise defaults to origin)
+        if self.root_model.nkey > 0:
+            mujoco.mj_setKeyframe(self.root_model, self.root_data, 0)
+
         # Setup ObjectRegistry for robot-only (scenes not yet implemented)
         self.object_registry.setup_ranges(self.num_envs, robot_count=1, scene_count=0, individual_count=0)
 

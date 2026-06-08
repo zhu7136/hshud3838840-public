@@ -199,6 +199,10 @@ class TerrainTermCfg:
     obj_file_path: str = ""
     """Path to OBJ file for custom terrain mesh."""
 
+    ground_z_threshold: float = 0.01
+    """Minimum Z height to detect as obstacle above ground plane (meters).
+    Used by MuJoCo to auto-extract collision boxes from OBJ terrain meshes."""
+
     scale_factor: float = 1.0
     """Use for performance to scale border_size, terrain_length, terrain_width, num_ros and num_cols."""
 

@@ -96,7 +96,7 @@ class VirtualGantry:
         elif cfg.point is not None:
             self.point = np.array(cfg.point)  # Convert list[float] to numpy array
         else:
-            self.point = np.array([0.0, 0.0, self.height])
+            self.point = np.array([0.293, -1.297, self.height])
 
         self.length = cfg.length
         self.apply_force = cfg.apply_force

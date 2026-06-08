@@ -67,28 +67,28 @@ g1_29dof_wbt_fast_sac_reward = RewardManagerCfg(
         **g1_29dof_wbt_reward.terms,
         "action_rate_l2": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:penalty_action_rate",
-            weight=-1.0,
+            weight=-0.5,  # 从 -1.0 减少到 -0.5
         ),
         "motion_global_ref_position_error_exp": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:motion_global_ref_position_error_exp",
             params={"sigma": 0.3},
-            weight=1.0,
+            weight=2.0,  # 从 1.0 增加到 2.0
         ),
         "motion_global_ref_orientation_error_exp": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:motion_global_ref_orientation_error_exp",
             params={"sigma": 0.4},
-            weight=0.5,
+            weight=1.0,  # 从 0.5 增加到 1.0
         ),
         # Motion tracking rewards - relative body frame
         "motion_relative_body_position_error_exp": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:motion_relative_body_position_error_exp",
             params={"sigma": 0.3},
-            weight=2.0,
+            weight=3.0,  # 从 2.0 增加到 3.0
         ),
         "motion_relative_body_orientation_error_exp": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:motion_relative_body_orientation_error_exp",
             params={"sigma": 0.4},
-            weight=1.0,
+            weight=1.5,  # 从 1.0 增加到 1.5
         ),
     }
 )

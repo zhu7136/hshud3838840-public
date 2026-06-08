@@ -74,6 +74,8 @@ class RobotForceControlConfig:
 @dataclass(frozen=True)
 class ObjectConfig:
     object_urdf_path: str | None = None
+    fixed: bool = False
+    """If True, the object is fixed in place (kinematic) and cannot move."""
 
 
 @dataclass(frozen=True)

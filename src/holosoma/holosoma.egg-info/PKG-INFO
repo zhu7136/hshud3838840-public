@@ -45,7 +45,7 @@ Requires-Dist: warp-lang==1.10.0
 Requires-Dist: yourdfpy>=0.0.58
 Requires-Dist: zmq
 Provides-Extra: unitree
-Requires-Dist: unitree_sdk2 @ https://github.com/amazon-far/unitree_sdk2/releases/download/0.1.2/unitree_sdk2-0.1.2-cp311-cp311-linux_x86_64.whl ; extra == "unitree"
+Requires-Dist: unitree_sdk2 @ https://github.com/amazon-far/unitree_sdk2/releases/download/0.1.2/unitree_sdk2-0.1.2-cp313-cp313-linux_x86_64.whl ; extra == "unitree"
 Provides-Extra: booster
-Requires-Dist: booster_robotics_sdk @ https://github.com/amazon-far/booster_robotics_sdk/releases/download/0.1.0/booster_robotics_sdk-0.1.0-cp311-cp311-linux_x86_64.whl ; extra == "booster"
+Requires-Dist: booster_robotics_sdk @ https://github.com/amazon-far/booster_robotics_sdk/releases/download/0.1.0/booster_robotics_sdk-0.1.0-cp313-cp313-linux_x86_64.whl ; extra == "booster"
 Dynamic: provides-extra

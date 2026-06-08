@@ -251,19 +251,17 @@ class USDFileLoader:
                 matching_config
             )
 
-            # Apply some physics properties directly to USD file before spawning (TODO: why)
-            temp_stage = Usd.Stage.Open(usd_path)
-            if temp_stage and physics_config:
-                from holosoma.simulator.isaacsim.usd_physics_utils import apply_physics_config_to_usd
+            # Skip applying physics properties directly to USD file to avoid hierarchy conflicts
+            # Physics properties will be applied through RigidObjectCfg instead
 
-                success = apply_physics_config_to_usd(temp_stage, prim_path, physics_config)
-                if success:
-                    temp_stage.Save()
-                else:
-                    raise RuntimeError(f"Failed to apply physics config to USD prim: {prim_path}")
-
-            # Create RigidObjectCfg with basic properties (physics already applied to USD)
+            # Create RigidObjectCfg with basic properties
             from holosoma.simulator.isaacsim.spawners.from_files_cfg import CustomUsdFileCfg
+            import isaaclab.sim as sim_utils_local
+
+            # Disable articulation root to avoid conflicts
+            articulation_props = sim_utils_local.ArticulationRootPropertiesCfg(
+                articulation_enabled=False,
+            )
 
             prim_configs[stripped_name] = RigidObjectCfg(
                 prim_path=target_prim_path,
@@ -273,7 +271,7 @@ class USDFileLoader:
                     rigid_props=rigid_props,
                     mass_props=mass_props,
                     collision_props=collision_props,
-                    # Note: physics properties already applied directly to USD file
+                    articulation_props=articulation_props,
                 ),
                 # Note: init_state (position/rotation) will be computed from USD transforms
             )

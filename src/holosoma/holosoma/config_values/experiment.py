@@ -7,9 +7,11 @@ from holosoma.config_values.loco.t1.experiment import t1_29dof, t1_29dof_fast_sa
 from holosoma.config_values.wbt.g1.experiment import (
     g1_29dof_wbt,
     g1_29dof_wbt_fast_sac,
+    g1_29dof_wbt_fast_sac_climb,
     g1_29dof_wbt_fast_sac_w_object,
     g1_29dof_wbt_w_object,
 )
+from holosoma.config_values.wbt.hu_d04.experiment import hu_d04_29dof_wbt_fast_sac, hu_d04_31dof_wbt_fast_sac
 
 DEFAULTS = {
     "g1_29dof": g1_29dof,
@@ -19,7 +21,10 @@ DEFAULTS = {
     "g1_29dof_wbt": g1_29dof_wbt,
     "g1_29dof_wbt_w_object": g1_29dof_wbt_w_object,
     "g1_29dof_wbt_fast_sac": g1_29dof_wbt_fast_sac,
+    "g1_29dof_wbt_fast_sac_climb": g1_29dof_wbt_fast_sac_climb,
     "g1_29dof_wbt_fast_sac_w_object": g1_29dof_wbt_fast_sac_w_object,
+    "hu_d04_31dof_wbt_fast_sac": hu_d04_31dof_wbt_fast_sac,
+    "hu_d04_29dof_wbt_fast_sac": hu_d04_29dof_wbt_fast_sac,
 }
 
 AnnotatedExperimentConfig = Annotated[
