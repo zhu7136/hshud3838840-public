@@ -354,29 +354,66 @@ class IsaacSim(BaseSimulator):
             global_collision_prims.append(terrain_config.prim_path)
         elif terrain_state.mesh_type in ["trimesh", "load_obj"]:
             self.terrain = self.terrain_manager.get_state("locomotion_terrain").terrain
-            visual_material = sim_utils.PreviewSurfaceCfg(diffuse_color=(1.0, 0.0, 0.0))
             physics_material = sim_utils.RigidBodyMaterialCfg(
                 static_friction=terrain_state.static_friction,
                 dynamic_friction=terrain_state.dynamic_friction,
                 restitution=terrain_state.restitution,
             )
 
-            create_prim_from_mesh(
-                terrain_prim_path,
-                self.terrain.mesh,
-                visual_material=visual_material,
-                physics_material=physics_material,
-                translation=(0.0, 0.0, 0.0),
-            )
-            # Set collision properties for terrain
+            # Try to load terrain parts separately for different colors
+            from holosoma.utils.path import resolve_data_file_path
+            terrain_obj_path = str(resolve_data_file_path(terrain_state._cfg.obj_file_path))
+            base_path = terrain_obj_path.replace("_with_boxes_thick.obj", "").replace("_with_boxes.obj", "")
+
+            platform_path = base_path + "_platform.obj"
+            tall_box_path = base_path + "_box_tall.obj"
+            step_path = base_path + "_step.obj"
+
             terrain_collision_cfg = sim_utils.CollisionPropertiesCfg(
                 collision_enabled=True,
                 contact_offset=0.02,
                 rest_offset=0.0,
             )
-            sim_utils.define_collision_properties(f"{terrain_prim_path}/mesh", terrain_collision_cfg)
-            global_collision_prims.append(terrain_prim_path)
-            print("[INFO] Successfully created custom terrain mesh")
+
+            if os.path.exists(tall_box_path):
+                # Create a ground plane as base terrain
+                ground_plane_cfg = TerrainImporterCfg(
+                    prim_path=terrain_prim_path,
+                    terrain_type="plane",
+                    collision_group=-1,
+                    physics_material=sim_utils.RigidBodyMaterialCfg(
+                        friction_combine_mode="multiply",
+                        restitution_combine_mode="multiply",
+                        static_friction=terrain_state.static_friction,
+                        dynamic_friction=terrain_state.dynamic_friction,
+                        restitution=0.0,
+                    ),
+                    debug_vis=False,
+                )
+                ground_plane_cfg.num_envs = self.scene.cfg.num_envs
+                ground_plane_cfg.env_spacing = self.scene.cfg.env_spacing
+                ground_plane_cfg.class_type(ground_plane_cfg)
+                global_collision_prims.append(terrain_prim_path)
+                print("[INFO] Created ground plane at /World/ground")
+
+                # Load tall box (gray) as obstacle
+                tall_mesh = trimesh.load(tall_box_path, force="mesh")
+                tall_prim = "/World/ground_tall_box"
+                create_prim_from_mesh(tall_prim, tall_mesh,
+                    visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.5, 0.6, 0.7)),
+                    physics_material=physics_material, translation=(0.0, 0.0, 0.0))
+                sim_utils.define_collision_properties(f"{tall_prim}/mesh", terrain_collision_cfg)
+                global_collision_prims.append(tall_prim)
+                print(f"[INFO] Loaded tall box (gray): {tall_box_path}")
+            else:
+                # Fallback: load combined mesh in single color
+                visual_material = sim_utils.PreviewSurfaceCfg(diffuse_color=(0.5, 0.6, 0.7))
+                create_prim_from_mesh(terrain_prim_path, self.terrain.mesh,
+                    visual_material=visual_material,
+                    physics_material=physics_material, translation=(0.0, 0.0, 0.0))
+                sim_utils.define_collision_properties(f"{terrain_prim_path}/mesh", terrain_collision_cfg)
+                global_collision_prims.append(terrain_prim_path)
+                print("[INFO] Loaded combined terrain mesh (single color)")
         else:
             raise ValueError(f"Unsupported terrain mesh type: {terrain_state.mesh_type}")
 

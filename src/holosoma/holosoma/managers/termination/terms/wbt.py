@@ -41,6 +41,7 @@ class BadTracking(TerminationTermBase):
     def __init__(self, cfg: TerminationTermCfg, env: WholeBodyTrackingManager):
         super().__init__(cfg, env)
 
+        self.startup_grace_steps = cfg.params.get("startup_grace_steps", 0)
         self.bad_ref_pos_threshold = cfg.params["bad_ref_pos_threshold"]
         self.bad_ref_ori_threshold = cfg.params["bad_ref_ori_threshold"]
 
@@ -57,6 +58,14 @@ class BadTracking(TerminationTermBase):
         self.bad_object_ori_threshold = cfg.params["bad_object_ori_threshold"]
 
     def __call__(self, env: Any, **kwargs) -> torch.Tensor:
+        # Skip tracking check during startup grace period
+        if self.startup_grace_steps > 0:
+            grace_mask = env.episode_length_buf < self.startup_grace_steps
+            if grace_mask.all():
+                return torch.zeros(env.num_envs, dtype=torch.bool, device=env.device)
+        else:
+            grace_mask = None
+
         motion_command = self.env.command_manager.get_state("motion_command")
         assert motion_command.motion_cfg.body_names_to_track == self.body_names_to_track, (
             "body_names_to_track in motion_command and termination.params are not the same"
@@ -74,6 +83,10 @@ class BadTracking(TerminationTermBase):
             bad_object_pos = self.bad_object_pos(motion_command)
             bad_object_ori = self.bad_object_ori(motion_command)
             bad_tracking |= bad_object_pos | bad_object_ori
+
+        # Mask out environments still in grace period
+        if grace_mask is not None:
+            bad_tracking = bad_tracking & ~grace_mask
 
         return bad_tracking
 

@@ -92,7 +92,7 @@ hu_d04_29dof_wbt_fast_sac = replace(
             action_scales_by_effort_limit_over_p_gain=True,
         ),
         asset=replace(robot.hu_d04_29dof.asset, enable_self_collisions=True),
-        init_state=replace(robot.hu_d04_29dof.init_state, pos=[0.0, 0.0, 0.93]),
+        init_state=replace(robot.hu_d04_29dof.init_state, pos=[0.0, 0.0, 1.05]),
     ),
     observation=hu_d04_observation.hu_d04_29dof_wbt_observation,
     action=action.hu_d04_29dof_joint_pos,

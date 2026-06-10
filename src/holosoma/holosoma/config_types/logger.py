@@ -71,8 +71,8 @@ class WandbLoggerConfig:
     """Resume behaviour passed directly to wandb.init."""
 
     # Video recording configuration
-    video: VideoConfig = field(default_factory=VideoConfig)
-    """Video recording configuration."""
+    video: VideoConfig = field(default_factory=lambda: VideoConfig(enabled=False))
+    """Video recording configuration; disabled by default."""
 
     headless_recording: bool = False
     """Enable video recording in headless mode (saves to local directory and logs to wandb).

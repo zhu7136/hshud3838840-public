@@ -58,6 +58,7 @@ terrain_load_obj = TerrainManagerCfg(
         obj_file_path="holosoma/data/motions/g1_29dof/whole_body_tracking/terrain_parkour.obj",
         spawn=SpawnCfg(
             query_terrain_height=False,
+            randomize_tiles=False,
         ),
     )
 )
