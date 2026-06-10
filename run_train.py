@@ -1,34 +1,40 @@
-#!/usr/bin/env python3
-"""Training entry point that ensures holosoma is installed before running."""
+"""Training entry point for Gradmotion platform.
+
+Usage: gm-run hshud3838840-public/run_train.py <training args...>
+
+The Gradmotion SDK automatically installs packages from the repo before
+running this script. If holosoma is still not importable, we attempt
+a local pip install as fallback.
+"""
 
 import subprocess
 import sys
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent
+HOLOSOMA_PATH = REPO_ROOT / "src" / "holosoma"
 
-def ensure_holosoma_installed():
-    """Install holosoma in editable mode if not already installed."""
+
+def ensure_holosoma():
+    """Ensure holosoma is importable, installing if needed."""
     try:
         import holosoma  # noqa: F401
+        print(f"[run_train.py] holosoma found: {holosoma.__file__}")
+        return
     except ImportError:
-        # Find the holosoma package relative to this script
-        repo_root = Path(__file__).resolve().parent
-        holosoma_path = repo_root / "src" / "holosoma"
-        if not holosoma_path.exists():
-            print(f"ERROR: holosoma package not found at {holosoma_path}")
-            sys.exit(1)
-        print(f"Installing holosoma from {holosoma_path} ...")
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "-e", str(holosoma_path)],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-        )
+        pass
+
+    print(f"[run_train.py] holosoma not found, installing from {HOLOSOMA_PATH} ...")
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "-e", str(HOLOSOMA_PATH)],
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+    )
 
 
 if __name__ == "__main__":
-    ensure_holosoma_installed()
+    print(f"[run_train.py] Python: {sys.executable}")
+    ensure_holosoma()
 
-    # Forward all CLI args to train_agent.py
     from holosoma.train_agent import main
-
     main()
