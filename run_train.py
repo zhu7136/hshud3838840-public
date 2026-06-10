@@ -12,27 +12,7 @@ HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
 
 
 def ensure_holosoma():
-    """Ensure holosoma is importable."""
-    # 1. Try import directly
-    try:
-        import holosoma  # noqa: F401
-        print(f"[run_train.py] holosoma found: {holosoma.__file__}")
-        return
-    except ImportError:
-        pass
-
-    # 2. Try adding source dir to sys.path (fastest, no install needed)
-    src_str = str(HOLOSOMA_SRC)
-    if src_str not in sys.path:
-        sys.path.insert(0, src_str)
-    try:
-        import holosoma  # noqa: F401
-        print(f"[run_train.py] holosoma found via sys.path: {holosoma.__file__}")
-        return
-    except ImportError:
-        pass
-
-    # 3. Fallback: pip install
+    """Install holosoma and all its dependencies."""
     print(f"[run_train.py] Installing holosoma from {HOLOSOMA_SRC} ...")
     subprocess.check_call(
         [sys.executable, "-m", "pip", "install", str(HOLOSOMA_SRC)],
