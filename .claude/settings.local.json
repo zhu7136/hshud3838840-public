@@ -83,7 +83,10 @@
       "Bash(npm root *)",
       "Read(//usr/local/lib/node_modules/@limxdynamics/gm-cli/**)",
       "Read(//usr/local/lib/node_modules/@limxdynamics/gm-cli/bin/**)",
-      "Bash(tar tzf *)"
+      "Bash(tar tzf *)",
+      "Bash(git fetch *)",
+      "Bash(git merge *)",
+      "Bash(git checkout *)"
     ]
   }
 }
