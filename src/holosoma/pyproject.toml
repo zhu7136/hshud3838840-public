@@ -22,7 +22,7 @@ dependencies = [
     "numpy-stl",
     "numpy>=1.23.5,<2",
     "omegaconf",  # Used for config resolvers and DictConfig type hints
-    "packaging<25",  # pin: newer versions break torch._vendor.packaging
+    "packaging==23.2",  # pin: must match PyTorch's vendored packaging
     "onnx",
     "onnxruntime",
     "open3d",
