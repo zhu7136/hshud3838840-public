@@ -3,6 +3,7 @@
 Usage: gm-run hshud3838840-public/run_train.py <training args...>
 """
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -14,8 +15,11 @@ HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
 def ensure_holosoma():
     """Install holosoma and all its dependencies."""
     print(f"[run_train.py] Installing holosoma from {HOLOSOMA_SRC} ...")
+    cmd = [sys.executable, "-m", "pip", "install", str(HOLOSOMA_SRC)]
+    pip_mirror = "https://pypi.tuna.tsinghua.edu.cn/simple"
+    cmd.extend(["-i", pip_mirror])
     subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", str(HOLOSOMA_SRC)],
+        cmd,
         stdout=sys.stdout,
         stderr=sys.stderr,
     )
