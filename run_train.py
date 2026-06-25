@@ -40,6 +40,9 @@ def fix_isaacsim_torch_vendored_packaging():
         print(f"[run_train.py] Warning: source _structures.py not found at {source_structures}")
         return
     
+    # Create directory if it doesn't exist
+    torch_vendor_packaging.mkdir(parents=True, exist_ok=True)
+    
     print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py")
     shutil.copy2(source_structures, structures_file)
     print(f"[run_train.py] Copied _structures.py to {structures_file}")
