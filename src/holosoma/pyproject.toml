@@ -22,7 +22,7 @@ dependencies = [
     "numpy-stl",
     "numpy>=1.23.5,<2",
     "omegaconf",  # Used for config resolvers and DictConfig type hints
-    "packaging==23.2",  # pin: must match PyTorch's vendored packaging
+    "packaging>=21.3",
     "onnx",
     "onnxruntime",
     "open3d",
@@ -59,6 +59,7 @@ dynamic = ["optional-dependencies"]
 [project.entry-points."holosoma.bridge"]
 unitree = "holosoma.bridge.unitree:UnitreeSdk2Bridge"
 booster = "holosoma.bridge.booster:BoosterSdk2Bridge"
+sim2sim = "holosoma.bridge.sim2sim:Sim2SimBridge"
 
 [tool.setuptools.packages.find]
 where = ["."]
