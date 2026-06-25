@@ -15,18 +15,24 @@ HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
 
 def fix_isaacsim_torch_vendored_packaging():
     """Fix IsaacSim's torch vendored packaging missing _structures.py."""
-    # Find IsaacSim's torch vendored packaging directory
-    torch_vendor_packaging = None
-    for p in Path("/workspace/isaaclab/_isaac_sim").rglob("torch/_vendor/packaging"):
-        if p.is_dir():
-            torch_vendor_packaging = p
+    # Find IsaacSim's torch __init__.py to locate the vendored packaging
+    torch_init = None
+    for p in Path("/workspace/isaaclab/_isaac_sim").rglob("torch/__init__.py"):
+        if "pip_prebundle" in str(p) or "_vendor" in str(p.parent):
+            torch_init = p
             break
     
-    if torch_vendor_packaging is None:
-        print("[run_train.py] IsaacSim torch vendored packaging not found, skipping fix")
+    if torch_init is None:
+        print("[run_train.py] IsaacSim torch not found, skipping fix")
         return
     
-    structures_file = torch_vendor_packaging / "_structures.py"
+    torch_dir = torch_init.parent
+    vendor_packaging = torch_dir / "_vendor" / "packaging"
+    
+    # Create the _vendor/packaging directory structure if it doesn't exist
+    vendor_packaging.mkdir(parents=True, exist_ok=True)
+    
+    structures_file = vendor_packaging / "_structures.py"
     if structures_file.exists():
         print(f"[run_train.py] _structures.py already exists at {structures_file}")
         return
@@ -40,10 +46,7 @@ def fix_isaacsim_torch_vendored_packaging():
         print(f"[run_train.py] Warning: source _structures.py not found at {source_structures}")
         return
     
-    # Create directory if it doesn't exist
-    torch_vendor_packaging.mkdir(parents=True, exist_ok=True)
-    
-    print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py")
+    print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py to {vendor_packaging}")
     shutil.copy2(source_structures, structures_file)
     print(f"[run_train.py] Copied _structures.py to {structures_file}")
 
