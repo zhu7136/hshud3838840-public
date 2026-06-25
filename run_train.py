@@ -4,12 +4,45 @@ Usage: gm-run hshud3838840-public/run_train.py <training args...>
 """
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent
 HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
+
+
+def fix_isaacsim_torch_vendored_packaging():
+    """Fix IsaacSim's torch vendored packaging missing _structures.py."""
+    # Find IsaacSim's torch vendored packaging directory
+    torch_vendor_packaging = None
+    for p in Path("/workspace/isaaclab/_isaac_sim").rglob("torch/_vendor/packaging"):
+        if p.is_dir():
+            torch_vendor_packaging = p
+            break
+    
+    if torch_vendor_packaging is None:
+        print("[run_train.py] IsaacSim torch vendored packaging not found, skipping fix")
+        return
+    
+    structures_file = torch_vendor_packaging / "_structures.py"
+    if structures_file.exists():
+        print(f"[run_train.py] _structures.py already exists at {structures_file}")
+        return
+    
+    # Find system packaging's _structures.py
+    import packaging
+    packaging_dir = Path(packaging.__file__).parent
+    source_structures = packaging_dir / "_structures.py"
+    
+    if not source_structures.exists():
+        print(f"[run_train.py] Warning: source _structures.py not found at {source_structures}")
+        return
+    
+    print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py")
+    shutil.copy2(source_structures, structures_file)
+    print(f"[run_train.py] Copied _structures.py to {structures_file}")
 
 
 def ensure_holosoma():
@@ -29,6 +62,9 @@ def ensure_holosoma():
 if __name__ == "__main__":
     print(f"[run_train.py] Python: {sys.executable}")
     ensure_holosoma()
+    
+    # Fix IsaacSim torch vendored packaging before importing torch
+    fix_isaacsim_torch_vendored_packaging()
 
     from holosoma.train_agent import main
     main()
