@@ -15,18 +15,22 @@ HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
 
 def fix_isaacsim_torch_vendored_packaging():
     """Fix IsaacSim's torch vendored packaging missing _structures.py."""
-    # Find IsaacSim's torch __init__.py to locate the vendored packaging
-    torch_init = None
-    for p in Path("/workspace/isaaclab/_isaac_sim").rglob("torch/__init__.py"):
-        if "pip_prebundle" in str(p) or "_vendor" in str(p.parent):
-            torch_init = p
+    # Known IsaacSim torch paths
+    torch_paths = [
+        Path("/workspace/isaaclab/_isaac_sim/exts/omni.isaac.ml_archive/pip_prebundle/torch"),
+        Path("/workspace/isaaclab/_isaac_sim/kit/python/lib/python3.11/site-packages/torch"),
+    ]
+    
+    torch_dir = None
+    for p in torch_paths:
+        if p.exists():
+            torch_dir = p
             break
     
-    if torch_init is None:
+    if torch_dir is None:
         print("[run_train.py] IsaacSim torch not found, skipping fix")
         return
     
-    torch_dir = torch_init.parent
     vendor_packaging = torch_dir / "_vendor" / "packaging"
     
     # Create the _vendor/packaging directory structure if it doesn't exist
