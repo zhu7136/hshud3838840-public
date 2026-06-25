@@ -23,6 +23,12 @@ def ensure_holosoma():
         stdout=sys.stdout,
         stderr=sys.stderr,
     )
+    # Pin packaging<24 for IsaacSim torch compatibility
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "packaging<24"],
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+    )
 
 
 if __name__ == "__main__":
