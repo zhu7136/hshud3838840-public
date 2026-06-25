@@ -24,9 +24,10 @@ def ensure_holosoma():
         stderr=sys.stderr,
     )
     # Pin packaging<24 for IsaacSim torch compatibility
-    # Use --force-reinstall to override pip's dependency resolver conflicts
+    # Use --ignore-installed to override pip's dependency resolver conflicts
+    # and avoid breaking pip itself
     subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "packaging<24", "--force-reinstall", "-i", pip_mirror],
+        [sys.executable, "-m", "pip", "install", "packaging<24", "--ignore-installed", "-i", pip_mirror],
         stdout=sys.stdout,
         stderr=sys.stderr,
     )
