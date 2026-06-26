@@ -15,99 +15,58 @@ HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
 
 def fix_isaacsim_torch_vendored_packaging():
     """Fix IsaacSim's torch vendored packaging missing _structures.py."""
-    # Create a minimal _structures.py content with the required classes
-    structures_content = '''
-class InfinityType:
-    """Infinity type for packaging version."""
-    def __repr__(self):
-        return "Infinity"
+    import types
     
-    def __hash__(self):
-        return hash("Infinity")
+    # Create the _structures module with required classes
+    class InfinityType:
+        """Infinity type for packaging version."""
+        def __repr__(self):
+            return "Infinity"
+        def __hash__(self):
+            return hash("Infinity")
+        def __lt__(self, other):
+            return False
+        def __le__(self, other):
+            return isinstance(other, InfinityType)
+        def __gt__(self, other):
+            return not isinstance(other, InfinityType)
+        def __ge__(self, other):
+            return True
+        def __eq__(self, other):
+            return isinstance(other, InfinityType)
+        def __ne__(self, other):
+            return not isinstance(other, InfinityType)
     
-    def __lt__(self, other):
-        return False
+    class NegativeInfinityType:
+        """Negative infinity type for packaging version."""
+        def __repr__(self):
+            return "-Infinity"
+        def __hash__(self):
+            return hash("-Infinity")
+        def __lt__(self, other):
+            return True
+        def __le__(self, other):
+            return True
+        def __gt__(self, other):
+            return False
+        def __ge__(self, other):
+            return not isinstance(other, NegativeInfinityType)
+        def __eq__(self, other):
+            return isinstance(other, NegativeInfinityType)
+        def __ne__(self, other):
+            return not isinstance(other, NegativeInfinityType)
     
-    def __le__(self, other):
-        return isinstance(other, InfinityType)
+    # Create the module
+    structures_module = types.ModuleType("torch._vendor.packaging._structures")
+    structures_module.InfinityType = InfinityType
+    structures_module.NegativeInfinityType = NegativeInfinityType
+    structures_module.Infinity = InfinityType()
+    structures_module.NegativeInfinity = NegativeInfinityType()
     
-    def __gt__(self, other):
-        return not isinstance(other, InfinityType)
-    
-    def __ge__(self, other):
-        return True
-    
-    def __eq__(self, other):
-        return isinstance(other, InfinityType)
-    
-    def __ne__(self, other):
-        return not isinstance(other, InfinityType)
-
-class NegativeInfinityType:
-    """Negative infinity type for packaging version."""
-    def __repr__(self):
-        return "-Infinity"
-    
-    def __hash__(self):
-        return hash("-Infinity")
-    
-    def __lt__(self, other):
-        return True
-    
-    def __le__(self, other):
-        return True
-    
-    def __gt__(self, other):
-        return False
-    
-    def __ge__(self, other):
-        return not isinstance(other, NegativeInfinityType)
-    
-    def __eq__(self, other):
-        return isinstance(other, NegativeInfinityType)
-    
-    def __ne__(self, other):
-        return not isinstance(other, NegativeInfinityType)
-
-Infinity = InfinityType()
-NegativeInfinity = NegativeInfinityType()
-'''
-    
-    # Known IsaacSim torch paths
-    torch_paths = [
-        Path("/workspace/isaaclab/_isaac_sim/exts/omni.isaac.ml_archive/pip_prebundle/torch"),
-        Path("/workspace/isaaclab/_isaac_sim/kit/python/lib/python3.11/site-packages/torch"),
-    ]
-    
-    torch_dir = None
-    for p in torch_paths:
-        if p.exists():
-            torch_dir = p
-            break
-    
-    if torch_dir is None:
-        print("[run_train.py] IsaacSim torch not found, skipping fix")
-        return
-    
-    vendor_packaging = torch_dir / "_vendor" / "packaging"
-    structures_file = vendor_packaging / "_structures.py"
-    
-    if structures_file.exists():
-        print(f"[run_train.py] _structures.py already exists at {structures_file}")
-        return
-    
-    print(f"[run_train.py] Creating minimal _structures.py at {structures_file}")
-    try:
-        # Create directory if it doesn't exist
-        vendor_packaging.mkdir(parents=True, exist_ok=True)
-        
-        # Write the minimal _structures.py content
-        with open(structures_file, 'w') as f:
-            f.write(structures_content)
-        
-        print(f"[run_train.py] Created _structures.py successfully")
-    except Exception as e:
-        print(f"[run_train.py] Warning: failed to create _structures.py: {e}")
+    # Register the module in sys.modules
+    import sys
+    sys.modules["torch._vendor.packaging._structures"] = structures_module
+    print("[run_train.py] Injected torch._vendor.packaging._structures module")
 
 
 def ensure_holosoma():
