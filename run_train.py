@@ -85,6 +85,12 @@ def ensure_holosoma():
 
 if __name__ == "__main__":
     print(f"[run_train.py] Python: {sys.executable}")
+    
+    # Disable torch inductor to avoid compilation issues
+    os.environ["TORCH_COMPILE_DISABLE"] = "1"
+    os.environ["TORCHDYNAMO_DISABLE"] = "1"
+    print("[run_train.py] Disabled torch inductor compilation")
+    
     ensure_holosoma()
     
     # Fix IsaacSim torch vendored packaging before importing torch
