@@ -31,21 +31,6 @@ def fix_isaacsim_torch_vendored_packaging():
         print("[run_train.py] IsaacSim torch not found, skipping fix")
         return
     
-    vendor_packaging = torch_dir / "_vendor" / "packaging"
-    
-    # Create the _vendor/packaging directory structure if it doesn't exist
-    try:
-        vendor_packaging.mkdir(parents=True, exist_ok=True)
-        print(f"[run_train.py] Created directory: {vendor_packaging}")
-    except Exception as e:
-        print(f"[run_train.py] Warning: failed to create directory {vendor_packaging}: {e}")
-        return
-    
-    structures_file = vendor_packaging / "_structures.py"
-    if structures_file.exists():
-        print(f"[run_train.py] _structures.py already exists at {structures_file}")
-        return
-    
     # Find system packaging's _structures.py
     import packaging
     packaging_dir = Path(packaging.__file__).parent
@@ -55,21 +40,40 @@ def fix_isaacsim_torch_vendored_packaging():
         print(f"[run_train.py] Warning: source _structures.py not found at {source_structures}")
         return
     
-    print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py to {vendor_packaging}")
+    # Try using subprocess to copy the file (more reliable)
+    import subprocess
+    vendor_packaging = torch_dir / "_vendor" / "packaging"
+    structures_file = vendor_packaging / "_structures.py"
+    
+    if structures_file.exists():
+        print(f"[run_train.py] _structures.py already exists at {structures_file}")
+        return
+    
+    print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py")
     try:
-        shutil.copy2(source_structures, structures_file)
-        print(f"[run_train.py] Copied _structures.py to {structures_file}")
+        # Use cp command which may work better than Python's shutil
+        result = subprocess.run(
+            ["cp", str(source_structures), str(structures_file)],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            print(f"[run_train.py] Copied _structures.py to {structures_file}")
+        else:
+            print(f"[run_train.py] cp failed: {result.stderr}")
+            # Try mkdir -p and then cp
+            subprocess.run(["mkdir", "-p", str(vendor_packaging)], check=True)
+            result = subprocess.run(
+                ["cp", str(source_structures), str(structures_file)],
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0:
+                print(f"[run_train.py] Copied _structures.py after mkdir")
+            else:
+                print(f"[run_train.py] Failed: {result.stderr}")
     except Exception as e:
-        print(f"[run_train.py] Warning: failed to copy _structures.py: {e}")
-        # Try writing directly
-        try:
-            with open(source_structures, 'r') as f:
-                content = f.read()
-            with open(structures_file, 'w') as f:
-                f.write(content)
-            print(f"[run_train.py] Wrote _structures.py directly to {structures_file}")
-        except Exception as e2:
-            print(f"[run_train.py] Error: failed to write _structures.py: {e2}")
+        print(f"[run_train.py] Error: {e}")
 
 
 def ensure_holosoma():
