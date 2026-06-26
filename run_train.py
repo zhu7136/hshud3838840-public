@@ -34,7 +34,12 @@ def fix_isaacsim_torch_vendored_packaging():
     vendor_packaging = torch_dir / "_vendor" / "packaging"
     
     # Create the _vendor/packaging directory structure if it doesn't exist
-    vendor_packaging.mkdir(parents=True, exist_ok=True)
+    try:
+        vendor_packaging.mkdir(parents=True, exist_ok=True)
+        print(f"[run_train.py] Created directory: {vendor_packaging}")
+    except Exception as e:
+        print(f"[run_train.py] Warning: failed to create directory {vendor_packaging}: {e}")
+        return
     
     structures_file = vendor_packaging / "_structures.py"
     if structures_file.exists():
@@ -51,8 +56,20 @@ def fix_isaacsim_torch_vendored_packaging():
         return
     
     print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py to {vendor_packaging}")
-    shutil.copy2(source_structures, structures_file)
-    print(f"[run_train.py] Copied _structures.py to {structures_file}")
+    try:
+        shutil.copy2(source_structures, structures_file)
+        print(f"[run_train.py] Copied _structures.py to {structures_file}")
+    except Exception as e:
+        print(f"[run_train.py] Warning: failed to copy _structures.py: {e}")
+        # Try writing directly
+        try:
+            with open(source_structures, 'r') as f:
+                content = f.read()
+            with open(structures_file, 'w') as f:
+                f.write(content)
+            print(f"[run_train.py] Wrote _structures.py directly to {structures_file}")
+        except Exception as e2:
+            print(f"[run_train.py] Error: failed to write _structures.py: {e2}")
 
 
 def ensure_holosoma():
