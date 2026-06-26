@@ -15,6 +15,64 @@ HOLOSOMA_SRC = REPO_ROOT / "src" / "holosoma"
 
 def fix_isaacsim_torch_vendored_packaging():
     """Fix IsaacSim's torch vendored packaging missing _structures.py."""
+    # Create a minimal _structures.py content with the required classes
+    structures_content = '''
+class InfinityType:
+    """Infinity type for packaging version."""
+    def __repr__(self):
+        return "Infinity"
+    
+    def __hash__(self):
+        return hash("Infinity")
+    
+    def __lt__(self, other):
+        return False
+    
+    def __le__(self, other):
+        return isinstance(other, InfinityType)
+    
+    def __gt__(self, other):
+        return not isinstance(other, InfinityType)
+    
+    def __ge__(self, other):
+        return True
+    
+    def __eq__(self, other):
+        return isinstance(other, InfinityType)
+    
+    def __ne__(self, other):
+        return not isinstance(other, InfinityType)
+
+class NegativeInfinityType:
+    """Negative infinity type for packaging version."""
+    def __repr__(self):
+        return "-Infinity"
+    
+    def __hash__(self):
+        return hash("-Infinity")
+    
+    def __lt__(self, other):
+        return True
+    
+    def __le__(self, other):
+        return True
+    
+    def __gt__(self, other):
+        return False
+    
+    def __ge__(self, other):
+        return not isinstance(other, NegativeInfinityType)
+    
+    def __eq__(self, other):
+        return isinstance(other, NegativeInfinityType)
+    
+    def __ne__(self, other):
+        return not isinstance(other, NegativeInfinityType)
+
+Infinity = InfinityType()
+NegativeInfinity = NegativeInfinityType()
+'''
+    
     # Known IsaacSim torch paths
     torch_paths = [
         Path("/workspace/isaaclab/_isaac_sim/exts/omni.isaac.ml_archive/pip_prebundle/torch"),
@@ -31,17 +89,6 @@ def fix_isaacsim_torch_vendored_packaging():
         print("[run_train.py] IsaacSim torch not found, skipping fix")
         return
     
-    # Find system packaging's _structures.py
-    import packaging
-    packaging_dir = Path(packaging.__file__).parent
-    source_structures = packaging_dir / "_structures.py"
-    
-    if not source_structures.exists():
-        print(f"[run_train.py] Warning: source _structures.py not found at {source_structures}")
-        return
-    
-    # Try using subprocess to copy the file (more reliable)
-    import subprocess
     vendor_packaging = torch_dir / "_vendor" / "packaging"
     structures_file = vendor_packaging / "_structures.py"
     
@@ -49,31 +96,18 @@ def fix_isaacsim_torch_vendored_packaging():
         print(f"[run_train.py] _structures.py already exists at {structures_file}")
         return
     
-    print(f"[run_train.py] Fixing IsaacSim torch vendored packaging: copying _structures.py")
+    print(f"[run_train.py] Creating minimal _structures.py at {structures_file}")
     try:
-        # Use cp command which may work better than Python's shutil
-        result = subprocess.run(
-            ["cp", str(source_structures), str(structures_file)],
-            capture_output=True,
-            text=True
-        )
-        if result.returncode == 0:
-            print(f"[run_train.py] Copied _structures.py to {structures_file}")
-        else:
-            print(f"[run_train.py] cp failed: {result.stderr}")
-            # Try mkdir -p and then cp
-            subprocess.run(["mkdir", "-p", str(vendor_packaging)], check=True)
-            result = subprocess.run(
-                ["cp", str(source_structures), str(structures_file)],
-                capture_output=True,
-                text=True
-            )
-            if result.returncode == 0:
-                print(f"[run_train.py] Copied _structures.py after mkdir")
-            else:
-                print(f"[run_train.py] Failed: {result.stderr}")
+        # Create directory if it doesn't exist
+        vendor_packaging.mkdir(parents=True, exist_ok=True)
+        
+        # Write the minimal _structures.py content
+        with open(structures_file, 'w') as f:
+            f.write(structures_content)
+        
+        print(f"[run_train.py] Created _structures.py successfully")
     except Exception as e:
-        print(f"[run_train.py] Error: {e}")
+        print(f"[run_train.py] Warning: failed to create _structures.py: {e}")
 
 
 def ensure_holosoma():
