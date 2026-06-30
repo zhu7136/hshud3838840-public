@@ -45,7 +45,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -53,7 +53,7 @@
         <mesh
           filename="meshes/base_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <link name="left_hip_pitch_link">
     <inertial>
@@ -84,7 +84,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -92,7 +92,7 @@
         <mesh
           filename="meshes/left_hip_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_hip_pitch_joint"
     type="revolute">
@@ -140,7 +140,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -148,7 +148,7 @@
         <mesh
           filename="meshes/left_hip_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_hip_roll_joint"
     type="revolute">
@@ -196,7 +196,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -204,7 +204,7 @@
         <mesh
           filename="meshes/left_hip_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_hip_yaw_joint"
     type="revolute">
@@ -252,7 +252,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -260,7 +260,7 @@
         <mesh
           filename="meshes/left_knee_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_knee_joint"
     type="revolute">
@@ -308,7 +308,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -316,7 +316,7 @@
         <mesh
           filename="meshes/left_ankle_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_ankle_pitch_joint"
     type="revolute">
@@ -370,7 +370,7 @@
         <box size="0.25 0.094 0.02"/>
       </geometry>
     </collision>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -378,7 +378,7 @@
         <mesh
           filename="meshes/left_ankle_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_ankle_roll_joint"
     type="revolute">
@@ -494,7 +494,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -502,7 +502,7 @@
         <mesh
           filename="meshes/right_hip_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_hip_pitch_joint"
     type="revolute">
@@ -550,7 +550,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -558,7 +558,7 @@
         <mesh
           filename="meshes/right_hip_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_hip_roll_joint"
     type="revolute">
@@ -606,7 +606,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -614,7 +614,7 @@
         <mesh
           filename="meshes/right_hip_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_hip_yaw_joint"
     type="revolute">
@@ -662,7 +662,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -670,7 +670,7 @@
         <mesh
           filename="meshes/right_knee_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_knee_joint"
     type="revolute">
@@ -718,7 +718,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -726,7 +726,7 @@
         <mesh
           filename="meshes/right_ankle_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_ankle_pitch_joint"
     type="revolute">
@@ -780,7 +780,7 @@
         <box size="0.25 0.094 0.02"/>
       </geometry>
     </collision>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -788,7 +788,7 @@
         <mesh
           filename="meshes/right_ankle_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_ankle_roll_joint"
     type="revolute">
@@ -904,7 +904,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -912,7 +912,7 @@
         <mesh
           filename="meshes/waist_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="waist_yaw_joint"
     type="revolute">
@@ -960,7 +960,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -968,7 +968,7 @@
         <mesh
           filename="meshes/waist_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="waist_roll_joint"
     type="revolute">
@@ -1016,7 +1016,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1024,7 +1024,7 @@
         <mesh
           filename="meshes/waist_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="waist_pitch_joint"
     type="revolute">
@@ -1073,7 +1073,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1081,7 +1081,7 @@
         <mesh
           filename="meshes/left_shoulder_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_shoulder_pitch_joint"
     type="revolute">
@@ -1129,7 +1129,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1137,7 +1137,7 @@
         <mesh
           filename="meshes/left_shoulder_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_shoulder_roll_joint"
     type="revolute">
@@ -1185,7 +1185,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1193,7 +1193,7 @@
         <mesh
           filename="meshes/left_shoulder_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_shoulder_yaw_joint"
     type="revolute">
@@ -1241,7 +1241,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1249,7 +1249,7 @@
         <mesh
           filename="meshes/left_elbow_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_elbow_joint"
     type="revolute">
@@ -1297,7 +1297,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1305,7 +1305,7 @@
         <mesh
           filename="meshes/left_wrist_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_wrist_yaw_joint"
     type="revolute">
@@ -1353,7 +1353,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1361,7 +1361,7 @@
         <mesh
           filename="meshes/left_wrist_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_wrist_pitch_joint"
     type="revolute">
@@ -1409,7 +1409,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1417,7 +1417,7 @@
         <mesh
           filename="meshes/left_wrist_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="left_wrist_roll_joint"
     type="revolute">
@@ -1524,7 +1524,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1532,7 +1532,7 @@
         <mesh
           filename="meshes/right_shoulder_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_shoulder_pitch_joint"
     type="revolute">
@@ -1580,7 +1580,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1588,7 +1588,7 @@
         <mesh
           filename="meshes/right_shoulder_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_shoulder_roll_joint"
     type="revolute">
@@ -1636,7 +1636,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1644,7 +1644,7 @@
         <mesh
           filename="meshes/right_shoulder_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_shoulder_yaw_joint"
     type="revolute">
@@ -1692,7 +1692,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1700,7 +1700,7 @@
         <mesh
           filename="meshes/right_elbow_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_elbow_joint"
     type="revolute">
@@ -1748,7 +1748,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1756,7 +1756,7 @@
         <mesh
           filename="meshes/right_wrist_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_wrist_yaw_joint"
     type="revolute">
@@ -1804,7 +1804,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1812,7 +1812,7 @@
         <mesh
           filename="meshes/right_wrist_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_wrist_pitch_joint"
     type="revolute">
@@ -1860,7 +1860,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1868,7 +1868,7 @@
         <mesh
           filename="meshes/right_wrist_roll_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="right_wrist_roll_joint"
     type="revolute">
@@ -1975,7 +1975,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -1983,10 +1983,10 @@
         <mesh
           filename="meshes/neck_yaw_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="head_yaw_joint"
-    type="revolute">
+    type="fixed">
     <origin
       xyz="-0.013 0 0.3882"
       rpy="0 0 0" />
@@ -1994,13 +1994,6 @@
       link="waist_pitch_link" />
     <child
       link="head_yaw_link" />
-    <axis
-      xyz="0 0 1" />
-    <limit
-      lower="-0.785"
-      upper="0.785"
-      effort="19"
-      velocity="13" />
   </joint>
   <link name="head_pitch_link">
     <inertial>
@@ -2031,7 +2024,7 @@
           rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
-    <!-- <collision>
+    <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -2039,10 +2032,10 @@
         <mesh
           filename="meshes/neck_pitch_link.STL" />
       </geometry>
-    </collision> -->
+    </collision>
   </link>
   <joint name="head_pitch_joint"
-    type="revolute">
+    type="fixed">
     <origin
       xyz="0 0 0.0395"
       rpy="0 0 0" />
@@ -2050,13 +2043,6 @@
       link="head_yaw_link" />
     <child
       link="head_pitch_link" />
-    <axis
-      xyz="0 1 0" />
-    <limit
-      lower="-0.524"
-      upper="0.785"
-      effort="19"
-      velocity="13" />
   </joint>
 
   <!-- Camera -->

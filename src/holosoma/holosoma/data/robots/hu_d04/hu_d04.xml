@@ -186,11 +186,11 @@
             <!-- head -->
             <body name="head_yaw_link" pos="-0.013 0 0.3882">
               <inertial pos="-7e-05 0.002132 0.037884" quat="0.990388 0.0534065 -0.0629858 0.110957" mass="0.35819" diaginertia="0.000163282 0.000162189 0.000145528"/>
-              <joint name="head_yaw_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-0.785 0.785" armature="0.0153218"/>
+              <!-- head_yaw_joint fixed (removed) -->
               <geom type="mesh" class="visual" rgba="0.75294 0.75294 0.75294 1" mesh="head_yaw_link"/>
               <body name="head_pitch_link" pos="0 0 0.0395">
                 <inertial pos="0.010255 -0.000319 0.069397" quat="0.552937 0.549111 -0.444832 0.441432" mass="0.776041" diaginertia="0.00353783 0.00260718 0.00233699"/>
-                <joint name="head_pitch_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-0.524 0.785" armature="0.0153218"/>
+                <!-- head_pitch_joint fixed (removed) -->
                 <geom type="mesh" class="visual" rgba="0.75294 0.75294 0.75294 1" mesh="head_pitch_link"/>
                 <geom type="box" pos="0.0077 0 0.072" size="0.05 0.075 0.04" euler="0 0.17 0" />
               </body>

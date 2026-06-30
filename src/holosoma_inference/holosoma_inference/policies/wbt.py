@@ -132,7 +132,10 @@ class WholeBodyTrackingPolicy(BasePolicy):
         onnx_model = onnx.load(model_path)
         metadata = {}
         for prop in onnx_model.metadata_props:
-            metadata[prop.key] = json.loads(prop.value)
+            try:
+                metadata[prop.key] = json.loads(prop.value)
+            except (json.JSONDecodeError, TypeError):
+                metadata[prop.key] = prop.value
 
         # Extract URDF text from ONNX metadata
         assert "robot_urdf" in metadata, "Robot urdf text not found in ONNX metadata"
@@ -278,6 +281,10 @@ class WholeBodyTrackingPolicy(BasePolicy):
             self.scaled_policy_action = policy_action * self.policy_action_scale
         else:
             self.scaled_policy_action = policy_action * self.per_joint_policy_action_scale
+        # update motion timestep
+        self._set_motion_timestep()
+
+        return self.scaled_policy_action
         # update motion timestep
         self._set_motion_timestep()
 

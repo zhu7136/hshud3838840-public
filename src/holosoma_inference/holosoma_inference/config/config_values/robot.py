@@ -223,6 +223,116 @@ t1_29dof = RobotConfig(
 
 
 # =============================================================================
+# HU_D04 Robot Config
+# =============================================================================
+
+# HU_D04 29-DOF per-joint action scales (0.25 * effort / p_gain)
+HU_D04_29DOF_PER_JOINT_ACTION_SCALE = (
+    0.25 * 20.0 / 220.0,   # left_hip_pitch: effort/p_gain
+    0.25 * 20.0 / 200.0,   # left_hip_roll
+    0.25 * 20.0 / 200.0,   # left_hip_yaw
+    0.25 * 20.0 / 240.0,   # left_knee
+    0.25 * 10.0 / 60.0,    # left_ankle_pitch
+    0.25 * 10.0 / 60.0,    # left_ankle_roll
+    0.25 * 20.0 / 220.0,   # right_hip_pitch
+    0.25 * 20.0 / 200.0,   # right_hip_roll
+    0.25 * 20.0 / 200.0,   # right_hip_yaw
+    0.25 * 20.0 / 240.0,   # right_knee
+    0.25 * 10.0 / 60.0,    # right_ankle_pitch
+    0.25 * 10.0 / 60.0,    # right_ankle_roll
+    0.25 * 20.0 / 120.0,   # waist_yaw
+    0.25 * 20.0 / 90.0,    # waist_roll
+    0.25 * 20.0 / 90.0,    # waist_pitch
+    0.25 * 10.0 / 80.0,    # left_shoulder_pitch
+    0.25 * 10.0 / 80.0,    # left_shoulder_roll
+    0.25 * 10.0 / 70.0,    # left_shoulder_yaw
+    0.25 * 10.0 / 70.0,    # left_elbow
+    0.25 * 5.0 / 30.0,     # left_wrist_yaw
+    0.25 * 5.0 / 30.0,     # left_wrist_pitch
+    0.25 * 5.0 / 30.0,     # left_wrist_roll
+    0.25 * 10.0 / 80.0,    # right_shoulder_pitch
+    0.25 * 10.0 / 80.0,    # right_shoulder_roll
+    0.25 * 10.0 / 70.0,    # right_shoulder_yaw
+    0.25 * 10.0 / 70.0,    # right_elbow
+    0.25 * 5.0 / 30.0,     # right_wrist_yaw
+    0.25 * 5.0 / 30.0,     # right_wrist_pitch
+    0.25 * 5.0 / 30.0,     # right_wrist_roll
+)
+
+hu_d04_29dof = RobotConfig(
+    # Identity
+    robot_type="hu_d04_29dof",
+    robot="hu_d04",
+
+    # SDK Configuration
+    sdk_type="limx",
+    motor_type="serial",
+    message_type="HG",
+    use_sensor=False,
+
+    # Dimensions
+    num_motors=29,
+    num_joints=29,
+    num_upper_body_joints=14,
+
+    # Default Positions
+    default_dof_angles=(
+        -0.25, 0.0, 0.0, 0.55, -0.30, 0.0,   # left leg
+        -0.25, 0.0, 0.0, 0.55, -0.30, 0.0,   # right leg
+        0.0, 0.0, 0.0,                        # waist
+        0.10, 0.10, -0.20, -0.20, 0.0, 0.0, 0.0,  # left arm
+        0.10, -0.10, 0.20, -0.20, 0.0, 0.0, 0.0,  # right arm
+    ),
+    default_motor_angles=(
+        -0.25, 0.0, 0.0, 0.55, -0.30, 0.0,   # left leg
+        -0.25, 0.0, 0.0, 0.55, -0.30, 0.0,   # right leg
+        0.0, 0.0, 0.0,                        # waist
+        0.10, 0.10, -0.20, -0.20, 0.0, 0.0, 0.0,  # left arm
+        0.10, -0.10, 0.20, -0.20, 0.0, 0.0, 0.0,  # right arm
+    ),
+
+    # Mappings
+    motor2joint=tuple(range(29)),  # Identity mapping
+    joint2motor=tuple(range(29)),  # Identity mapping
+    dof_names=(
+        "left_hip_pitch_joint", "left_hip_roll_joint", "left_hip_yaw_joint",
+        "left_knee_joint", "left_ankle_pitch_joint", "left_ankle_roll_joint",
+        "right_hip_pitch_joint", "right_hip_roll_joint", "right_hip_yaw_joint",
+        "right_knee_joint", "right_ankle_pitch_joint", "right_ankle_roll_joint",
+        "waist_yaw_joint", "waist_roll_joint", "waist_pitch_joint",
+        "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint", "left_elbow_joint",
+        "left_wrist_yaw_joint", "left_wrist_pitch_joint", "left_wrist_roll_joint",
+        "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "right_elbow_joint",
+        "right_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint",
+    ),
+    dof_names_upper_body=(
+        "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint", "left_elbow_joint",
+        "left_wrist_yaw_joint", "left_wrist_pitch_joint", "left_wrist_roll_joint",
+        "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "right_elbow_joint",
+        "right_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint",
+    ),
+    dof_names_lower_body=(
+        "left_hip_pitch_joint", "left_hip_roll_joint", "left_hip_yaw_joint",
+        "left_knee_joint", "left_ankle_pitch_joint", "left_ankle_roll_joint",
+        "right_hip_pitch_joint", "right_hip_roll_joint", "right_hip_yaw_joint",
+        "right_knee_joint", "right_ankle_pitch_joint", "right_ankle_roll_joint",
+        "waist_yaw_joint", "waist_roll_joint", "waist_pitch_joint",
+    ),
+
+    # Link Names
+    torso_link_name="waist_pitch_link",
+    left_hand_link_name="left_hand_manip",
+    right_hand_link_name="right_hand_manip",
+
+    # HU_D04-Specific Constants
+    unitree_legged_const=None,
+    weak_motor_joint_index=None,
+    motion={"body_name_ref": ["waist_pitch_link"]},
+    default_per_joint_action_scale=HU_D04_29DOF_PER_JOINT_ACTION_SCALE,
+)
+
+
+# =============================================================================
 # Default Configurations Dictionary
 # =============================================================================
 
@@ -230,6 +340,7 @@ t1_29dof = RobotConfig(
 DEFAULTS = {
     "g1-29dof": g1_29dof,
     "t1-29dof": t1_29dof,
+    "hu-d04-29dof": hu_d04_29dof,
 }
 """Dictionary of all available robot configurations.
 

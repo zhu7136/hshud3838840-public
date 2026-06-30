@@ -361,7 +361,6 @@ class IsaacSim(BaseSimulator):
             )
 
             # Try to load terrain parts separately for different colors
-            from holosoma.utils.path import resolve_data_file_path
             terrain_obj_path = str(resolve_data_file_path(terrain_state._cfg.obj_file_path))
             base_path = terrain_obj_path.replace("_with_boxes_thick.obj", "").replace("_with_boxes.obj", "")
 
@@ -446,7 +445,7 @@ class IsaacSim(BaseSimulator):
             object_asset_urdf_path = resolve_data_file_path(self.robot_config.object.object_urdf_path)
             object_name = "object"  # hardcoded object name
             is_fixed = self.robot_config.object.fixed
-            object_cfg = ArticulationCfg(
+            object_cfg = RigidObjectCfg(
                 prim_path=f"/World/envs/env_.*/Object",
                 spawn=sim_utils.UrdfFileCfg(
                     fix_base=is_fixed,
@@ -462,24 +461,16 @@ class IsaacSim(BaseSimulator):
                         max_angular_velocity=1000.0,
                         max_depenetration_velocity=10.0,
                     ),
-                    articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-                        articulation_enabled=True,
-                        fix_root_link=is_fixed,
-                        enabled_self_collisions=True,
-                        solver_position_iteration_count=8,
-                        solver_velocity_iteration_count=4,
-                    ),
                     joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                         gains=sim_utils.UrdfConverterCfg.JointDriveCfg.PDGainsCfg(stiffness=0, damping=0)
                     ),
                 ),
-                init_state=ArticulationCfg.InitialStateCfg(
+                init_state=RigidObjectCfg.InitialStateCfg(
                     pos=(0.0, 0.0, 0.5),
                 ),
-                actuators={},  # No actuators for fixed-base object
             )
-            self._object = Articulation(object_cfg)
-            self.scene.articulations[object_name] = self._object
+            self._object = RigidObject(object_cfg)
+            self.scene.rigid_objects[object_name] = self._object
 
         # add lights
         # light_config = sim_utils.DomeLightCfg(intensity=2000.0, color=(0.98, 0.95, 0.88))

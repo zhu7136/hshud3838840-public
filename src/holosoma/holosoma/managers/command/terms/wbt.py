@@ -840,10 +840,12 @@ class MotionCommand(CommandTermBase):
 
     @property
     def body_pos_w(self) -> torch.Tensor:
-        return (
+        pos = (
             self.motion.body_pos_w[self.time_steps][:, self.tracked_body_indexes]
             + self._env.simulator.scene.env_origins[:, None, :]
         )
+        pos[:, :, 2] += self.motion_cfg.height_offset
+        return pos
 
     @property
     def body_quat_w(self) -> torch.Tensor:
@@ -859,7 +861,9 @@ class MotionCommand(CommandTermBase):
 
     @property
     def ref_pos_w(self) -> torch.Tensor:
-        return self.motion.body_pos_w[self.time_steps, self.ref_body_index] + self._env.simulator.scene.env_origins
+        pos = self.motion.body_pos_w[self.time_steps, self.ref_body_index] + self._env.simulator.scene.env_origins
+        pos[:, 2] += self.motion_cfg.height_offset
+        return pos
 
     @property
     def ref_quat_w(self) -> torch.Tensor:
@@ -875,7 +879,9 @@ class MotionCommand(CommandTermBase):
 
     @property
     def root_pos_w(self) -> torch.Tensor:
-        return self.motion.body_pos_w[self.time_steps, 0] + self._env.simulator.scene.env_origins
+        pos = self.motion.body_pos_w[self.time_steps, 0] + self._env.simulator.scene.env_origins
+        pos[:, 2] += self.motion_cfg.height_offset
+        return pos
 
     @property
     def root_quat_w(self) -> torch.Tensor:
@@ -1097,7 +1103,7 @@ class MotionCommand(CommandTermBase):
 
         # Keep z from init config but adopt the clip's x,y at the chosen anchor frame.
         default_root_pos = torch.tensor(
-            [motion_root_pos[0], motion_root_pos[1], init_state.pos[2]],
+            [motion_root_pos[0], motion_root_pos[1], init_state.pos[2] + self.motion_cfg.height_offset],
             dtype=torch.float32,
             device=self.device,
         ).unsqueeze(0)

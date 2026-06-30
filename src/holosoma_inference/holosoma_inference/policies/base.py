@@ -651,8 +651,8 @@ class BasePolicy:
         use_policy = self.use_policy_action
         get_ready = self.get_ready_state
 
-        kp_override = None
-        kd_override = None
+        kp_override = np.array(self.robot_config.motor_kp) if self.robot_config.motor_kp else None
+        kd_override = np.array(self.robot_config.motor_kd) if self.robot_config.motor_kd else None
 
         # Stage 1: Read State
         with self.latency_tracker.measure("read_state"):

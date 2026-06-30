@@ -396,7 +396,7 @@ class IsaacGym(BaseSimulator):
         # compatibility.
         pos = self.env_origins[env_id].clone()
         pos[:2] += torch_rand_float(-1.0, 1.0, (2, 1), device=str(self.device)).squeeze(1)
-        pos[2] = self.base_init_state[2]
+        pos[2] += self.base_init_state[2]
         start_pose.p = gymapi.Vec3(*pos)
 
         if env_id == 0:

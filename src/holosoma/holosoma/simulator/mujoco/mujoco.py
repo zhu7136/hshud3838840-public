@@ -883,11 +883,23 @@ class MuJoCo(BaseSimulator):
 
             # Map holosoma DOF indices to MuJoCo actuator indices
             for i, dof_name in enumerate(self.dof_names):
-                # Add prefix for MuJoCo actuator lookup (dof_names are clean, need prefixed version)
-                actuator_name = self._get_prefixed_name(dof_name)
-                actuator_id = mujoco.mj_name2id(self.root_model, mujoco.mjtObj.mjOBJ_ACTUATOR, actuator_name)
+                # Add prefix for MuJoCo joint lookup
+                joint_name = self._get_prefixed_name(dof_name)
+                joint_id = mujoco.mj_name2id(self.root_model, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
+                
+                # Find actuator that controls this joint
+                actuator_id = -1
+                for a in range(self.root_model.nu):
+                    if self.root_model.actuator_trnid[a][0] == joint_id:
+                        actuator_id = a
+                        break
+                
                 if actuator_id == -1:
-                    raise ValueError(f"Actuator for DOF '{dof_name}' (MuJoCo name: '{actuator_name}') not found")
+                    # Fallback: try by actuator name
+                    actuator_name = self._get_prefixed_name(dof_name)
+                    actuator_id = mujoco.mj_name2id(self.root_model, mujoco.mjtObj.mjOBJ_ACTUATOR, actuator_name)
+                    if actuator_id == -1:
+                        raise ValueError(f"Actuator for DOF '{dof_name}' (joint: '{joint_name}') not found")
                 self.root_data.ctrl[actuator_id] = torques_np[i]
 
     def draw_debug_viz(self):

@@ -55,7 +55,8 @@ def ray_cast(ray_starts_world: torch.Tensor, ray_directions_world: torch.Tensor,
   ray_starts_world = ray_starts_world.view(-1, 3)
   ray_directions_world = ray_directions_world.view(-1, 3)
   num_rays = len(ray_starts_world)
-  ray_starts_world_wp = wp.types.array(
+  _array = wp.array if hasattr(wp, 'array') else wp.types.array
+  ray_starts_world_wp = _array(
     ptr=ray_starts_world.data_ptr(),
     dtype=wp.vec3,
     shape=(num_rays,),
@@ -63,7 +64,7 @@ def ray_cast(ray_starts_world: torch.Tensor, ray_directions_world: torch.Tensor,
     # owner=False,
     device=wp_mesh.device,
   )
-  ray_directions_world_wp = wp.types.array(
+  ray_directions_world_wp = _array(
     ptr=ray_directions_world.data_ptr(),
     dtype=wp.vec3,
     shape=(num_rays,),
@@ -73,7 +74,7 @@ def ray_cast(ray_starts_world: torch.Tensor, ray_directions_world: torch.Tensor,
   )
   ray_hits_world = torch.zeros((num_rays, 3), device=ray_starts_world.device)
   ray_hits_world[:] = float('inf')
-  ray_hits_world_wp = wp.types.array(
+  ray_hits_world_wp = _array(
     ptr=ray_hits_world.data_ptr(),
     dtype=wp.vec3,
     shape=(num_rays,),
@@ -130,7 +131,8 @@ def nearest_point(points: torch.Tensor, wp_mesh: wp.Mesh) -> torch.Tensor:
   shape = points.shape
   points = points.view(-1, 3)
   num_points = len(points)
-  points_wp = wp.types.array(
+  _array = wp.array if hasattr(wp, 'array') else wp.types.array
+  points_wp = _array(
     ptr=points.data_ptr(),
     dtype=wp.vec3,
     shape=(num_points,),
@@ -140,7 +142,7 @@ def nearest_point(points: torch.Tensor, wp_mesh: wp.Mesh) -> torch.Tensor:
   )
   mesh_points = torch.zeros((num_points, 3), device=points.device)
   mesh_points[:] = float('inf')
-  mesh_points_wp = wp.types.array(
+  mesh_points_wp = _array(
     ptr=mesh_points.data_ptr(),
     dtype=wp.vec3,
     shape=(num_points,),

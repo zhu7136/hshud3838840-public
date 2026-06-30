@@ -127,5 +127,9 @@ class MotionConfig:
     """Duration in seconds of the post-appended interpolation phase.
     Only used if enable_default_pose_append is True."""
 
+    height_offset: float = 0.0
+    """整体高度偏移 (米)。正值向上，负值向下。
+    用于调整动作轨迹的整体高度，适配不同高度的地形。"""
+
     # noise related
     noise_to_initial_pose: NoiseToInitialPoseConfig = field(default_factory=NoiseToInitialPoseConfig)

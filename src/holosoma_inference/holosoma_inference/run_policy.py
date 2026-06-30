@@ -98,7 +98,7 @@ def _print_control_guide(policy_class, use_joystick: bool, dual_mode: bool = Fal
     logger.info("")
 
 
-def run_policy(config: InferenceConfig):
+def run_policy(config: InferenceConfig, auto_start: bool = False):
     """Run policy with Tyro configuration."""
     logger.info("🚀 Starting Policy with Tyro configuration...")
     logger.info(f"🤖 Robot: {config.robot.robot_type}")
@@ -119,6 +119,15 @@ def run_policy(config: InferenceConfig):
             policy = policy_class(config=config)
 
         logger.info("✅ Policy initialized successfully!")
+        
+        # Auto-start policy if requested (for environments without TTY)
+        if auto_start:
+            logger.info("🔄 Auto-starting policy...")
+            if hasattr(policy, 'primary'):
+                policy.primary._handle_start_policy()
+            else:
+                policy._handle_start_policy()
+        
         use_joystick = bool({"joystick", "interface"} & {config.task.velocity_input, config.task.state_input})
         _print_control_guide(policy_class, use_joystick, dual_mode=dual_mode)
         policy.run()
@@ -174,10 +183,12 @@ def main(annotated_config=None):
         help=f"Select a preset for the secondary policy. Choices: {list(DEFAULTS.keys())}",
     )
     pre.add_argument("--secondary", default=None, help="Set to 'none' to disable dual-mode.")
+    pre.add_argument("--auto-start", action="store_true", help="Auto-start policy without keyboard input.")
     known, remaining = pre.parse_known_args()
 
     disable_secondary = known.secondary is not None and known.secondary.lower() == "none"
     secondary_preset = known.secondary_preset
+    auto_start = known.auto_start
 
     # Strip --secondary.* args from remaining so tyro doesn't see them
     primary_argv, secondary_argv = _split_secondary_args(remaining)
@@ -216,7 +227,7 @@ def main(annotated_config=None):
         else:
             logger.warning("--secondary.* args ignored: no default secondary in this config")
 
-    run_policy(config)
+    run_policy(config, auto_start=auto_start)
 
 
 if __name__ == "__main__":

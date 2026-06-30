@@ -66,6 +66,7 @@ holosoma_inference/sdk/booster/state_processor/base/__init__.py
 holosoma_inference/sdk/booster/state_processor/base/basic_state_processor.py
 holosoma_inference/sdk/booster/state_processor/booster/__init__.py
 holosoma_inference/sdk/booster/state_processor/booster/booster_state_processor.py
+holosoma_inference/sdk/limx/__init__.py
 holosoma_inference/sdk/unitree/__init__.py
 holosoma_inference/sdk/unitree/unitree_interface.py
 holosoma_inference/sdk/unitree/unitree_interface_mp.py

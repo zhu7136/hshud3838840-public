@@ -5,6 +5,8 @@
 *.zip
 *.egg-info/
 *.egg
+build/
+dist/
 
 # Logs
 logs/
@@ -21,6 +23,15 @@ __pycache__/
 *.pt
 *.gif
 *.png
+*.onnx
 
 # Temp files
 2026-05-21-*.txt
+nohup.out
+task_log*.txt
+
+# Binary files
+*.docx
+
+# Tgz files
+*.tgz

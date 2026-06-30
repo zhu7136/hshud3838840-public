@@ -103,4 +103,25 @@ hu_d04_29dof_wbt_fast_sac = replace(
     reward=hu_d04_reward.hu_d04_29dof_wbt_reward,
 )
 
-__all__ = ["hu_d04_31dof_wbt_fast_sac", "hu_d04_29dof_wbt_fast_sac"]
+hu_d04_29dof_wbt_fast_sac_climb = replace(
+    hu_d04_29dof_wbt_fast_sac,
+    robot=replace(
+        robot.hu_d04_29dof,
+        control=replace(
+            robot.hu_d04_29dof.control,
+            action_scale=0.25,
+            action_scales_by_effort_limit_over_p_gain=True,
+        ),
+        asset=replace(robot.hu_d04_29dof.asset, enable_self_collisions=True),
+        init_state=replace(robot.hu_d04_29dof.init_state, pos=[0.0, 0.0, 0.76]),
+    ),
+    simulator=replace(
+        simulator.isaacsim,
+        config=replace(
+            simulator.isaacsim.config,
+            scene=replace(simulator.isaacsim.config.scene, env_spacing=0.0),
+        ),
+    ),
+)
+
+__all__ = ["hu_d04_31dof_wbt_fast_sac", "hu_d04_29dof_wbt_fast_sac", "hu_d04_29dof_wbt_fast_sac_climb"]

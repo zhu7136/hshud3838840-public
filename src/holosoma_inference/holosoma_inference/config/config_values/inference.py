@@ -65,11 +65,65 @@ g1_29dof_wbt = InferenceConfig(
     secondary=_g1_safety_secondary,
 )
 
+
+# =============================================================================
+# HU_D04 Inference Configurations
+# =============================================================================
+
+# Safety locomotion for HU_D04
+_hu_d04_safety_secondary = InferenceConfig(
+    robot=robot.hu_d04_29dof,
+    observation=observation.loco_hu_d04_29dof,
+    task=task.locomotion,
+)
+
+hu_d04_29dof_loco = InferenceConfig(
+    robot=robot.hu_d04_29dof,
+    observation=observation.loco_hu_d04_29dof,
+    task=task.locomotion,
+    secondary=_hu_d04_safety_secondary,
+)
+
+# HU_D04 WBT robot config with stiff startup
+_hu_d04_29dof_wbt_robot = replace(
+    robot.hu_d04_29dof,
+    stiff_startup_pos=(
+        -0.25, 0.0, 0.0, 0.55, -0.30, 0.0,   # left leg
+        -0.25, 0.0, 0.0, 0.55, -0.30, 0.0,   # right leg
+        0.0, 0.0, 0.0,                        # waist
+        0.10, 0.10, -0.20, -0.20, 0.0, 0.0, 0.0,  # left arm
+        0.10, -0.10, 0.20, -0.20, 0.0, 0.0, 0.0,  # right arm
+    ),
+    stiff_startup_kp=(
+        220.0, 200.0, 200.0, 240.0, 60.0, 60.0,   # left leg
+        220.0, 200.0, 200.0, 240.0, 60.0, 60.0,   # right leg
+        120.0, 90.0, 90.0,                         # waist
+        80.0, 80.0, 70.0, 70.0, 30.0, 30.0, 30.0,  # left arm
+        80.0, 80.0, 70.0, 70.0, 30.0, 30.0, 30.0,  # right arm
+    ),
+    stiff_startup_kd=(
+        6.0, 5.0, 5.0, 6.0, 1.5, 1.5,   # left leg
+        6.0, 5.0, 5.0, 6.0, 1.5, 1.5,   # right leg
+        3.0, 2.5, 2.5,                   # waist
+        2.5, 2.5, 2.0, 2.0, 1.0, 1.0, 1.0,  # left arm
+        2.5, 2.5, 2.0, 2.0, 1.0, 1.0, 1.0,  # right arm
+    ),
+)
+
+hu_d04_29dof_wbt = InferenceConfig(
+    robot=_hu_d04_29dof_wbt_robot,
+    observation=observation.wbt,
+    task=task.wbt,
+    secondary=_hu_d04_safety_secondary,
+)
+
 # Core defaults - no extension imports at module load time
 DEFAULTS = {
     "g1-29dof-loco": g1_29dof_loco,
     "t1-29dof-loco": t1_29dof_loco,
     "g1-29dof-wbt": g1_29dof_wbt,
+    "hu-d04-29dof-loco": hu_d04_29dof_loco,
+    "hu-d04-29dof-wbt": hu_d04_29dof_wbt,
 }
 
 # Track whether extensions have been loaded
