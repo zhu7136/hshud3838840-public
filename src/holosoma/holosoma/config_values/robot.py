@@ -1833,11 +1833,11 @@ hu_d04_29dof = replace(
         2.792, 0.087, 3.403, 1.571, 2.356, 1.571, 1.571,   # right arm
     ],
     dof_vel_limit_list=[
-        5.0, 5.0, 5.0, 5.0, 13.6, 13.6,    # left leg
-        5.0, 5.0, 5.0, 5.0, 13.6, 13.6,    # right leg
-        13.6, 13.6, 13.6,                    # waist
-        19.6, 19.6, 19.6, 19.6, 13.0, 13.0, 13.0,  # left arm
-        19.6, 19.6, 19.6, 19.6, 13.0, 13.0, 13.0,  # right arm
+        20.0, 10.0, 20.0, 20.0, 20.0, 20.0,    # left leg (hip_pitch, hip_roll, hip_yaw, knee, ankle_pitch, ankle_roll)
+        20.0, 10.0, 20.0, 20.0, 20.0, 20.0,    # right leg
+        20.0, 20.0, 20.0,                        # waist (yaw, roll, pitch)
+        20.0, 20.0, 20.0, 20.0, 15.0, 15.0, 15.0,  # left arm
+        20.0, 20.0, 20.0, 20.0, 15.0, 15.0, 15.0,  # right arm
     ],
     dof_effort_limit_list=[
         140.0, 140.0, 140.0, 140.0, 42.0, 42.0,   # left leg
@@ -1888,40 +1888,40 @@ hu_d04_29dof = replace(
     control=replace(
         hu_d04_31dof.control,
         stiffness={
-            "hip_pitch": 220.0,
-            "hip_roll": 200.0,
-            "hip_yaw": 200.0,
-            "knee": 240.0,
-            "ankle_pitch": 60.0,
-            "ankle_roll": 60.0,
-            "waist_yaw": 120.0,
-            "waist_roll": 90.0,
-            "waist_pitch": 90.0,
-            "shoulder_pitch": 80.0,
-            "shoulder_roll": 80.0,
-            "shoulder_yaw": 70.0,
-            "elbow": 70.0,
-            "wrist_yaw": 30.0,
-            "wrist_pitch": 30.0,
-            "wrist_roll": 30.0,
+            "hip_pitch": 80.0,
+            "hip_roll": 80.0,
+            "hip_yaw": 80.0,
+            "knee": 100.0,
+            "ankle_pitch": 40.0,
+            "ankle_roll": 40.0,
+            "waist_yaw": 60.0,
+            "waist_roll": 50.0,
+            "waist_pitch": 50.0,
+            "shoulder_pitch": 25.0,
+            "shoulder_roll": 25.0,
+            "shoulder_yaw": 20.0,
+            "elbow": 20.0,
+            "wrist_yaw": 10.0,
+            "wrist_pitch": 10.0,
+            "wrist_roll": 10.0,
         },
         damping={
-            "hip_pitch": 6.0,
+            "hip_pitch": 5.0,
             "hip_roll": 5.0,
             "hip_yaw": 5.0,
-            "knee": 6.0,
-            "ankle_pitch": 1.5,
-            "ankle_roll": 1.5,
-            "waist_yaw": 3.0,
-            "waist_roll": 2.5,
-            "waist_pitch": 2.5,
-            "shoulder_pitch": 2.5,
-            "shoulder_roll": 2.5,
-            "shoulder_yaw": 2.0,
-            "elbow": 2.0,
-            "wrist_yaw": 1.0,
-            "wrist_pitch": 1.0,
-            "wrist_roll": 1.0,
+            "knee": 6.3,
+            "ankle_pitch": 2.5,
+            "ankle_roll": 2.5,
+            "waist_yaw": 3.8,
+            "waist_roll": 3.2,
+            "waist_pitch": 3.2,
+            "shoulder_pitch": 1.6,
+            "shoulder_roll": 1.6,
+            "shoulder_yaw": 1.3,
+            "elbow": 1.3,
+            "wrist_yaw": 0.6,
+            "wrist_pitch": 0.6,
+            "wrist_roll": 0.6,
         },
         action_scales_by_effort_limit_over_p_gain=True,
     ),
