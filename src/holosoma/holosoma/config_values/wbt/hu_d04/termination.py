@@ -12,7 +12,7 @@ hu_d04_31dof_wbt_termination = TerminationManagerCfg(
             func="holosoma.managers.termination.terms.wbt:BadTrackingZOnly",
             params={
                 # grace period: skip tracking check for first N steps after reset
-                "startup_grace_steps": 10,
+                "startup_grace_steps": 0,
                 # robot tracking
                 "bad_ref_pos_threshold": 0.5,
                 "bad_ref_ori_threshold": 0.8,

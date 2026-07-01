@@ -64,4 +64,56 @@ hu_d04_31dof_wbt_reward = RewardManagerCfg(
 
 hu_d04_29dof_wbt_reward = hu_d04_31dof_wbt_reward
 
-__all__ = ["hu_d04_31dof_wbt_reward", "hu_d04_29dof_wbt_reward"]
+hu_d04_31dof_wbt_fast_sac_reward = RewardManagerCfg(
+    terms={
+        **hu_d04_31dof_wbt_reward.terms,
+        # Increase motion tracking weights for fast_sac
+        "motion_global_ref_position_error_exp": RewardTermCfg(
+            func="holosoma.managers.reward.terms.wbt:motion_global_ref_position_error_exp",
+            params={"sigma": 0.3},
+            weight=3.0,  # from 2.0
+        ),
+        "motion_global_ref_orientation_error_exp": RewardTermCfg(
+            func="holosoma.managers.reward.terms.wbt:motion_global_ref_orientation_error_exp",
+            params={"sigma": 0.4},
+            weight=1.5,  # from 1.0
+        ),
+        "motion_relative_body_position_error_exp": RewardTermCfg(
+            func="holosoma.managers.reward.terms.wbt:motion_relative_body_position_error_exp",
+            params={"sigma": 0.3},
+            weight=4.0,  # from 3.0
+        ),
+        "motion_relative_body_orientation_error_exp": RewardTermCfg(
+            func="holosoma.managers.reward.terms.wbt:motion_relative_body_orientation_error_exp",
+            params={"sigma": 0.4},
+            weight=2.0,  # from 1.5
+        ),
+        # Reduce action rate penalty
+        "action_rate_l2": RewardTermCfg(
+            func="holosoma.managers.reward.terms.wbt:penalty_action_rate",
+            weight=-0.3,  # from -0.5
+        ),
+        # Reduce undesired contacts penalty
+        "undesired_contacts": RewardTermCfg(
+            func="holosoma.managers.reward.terms.wbt:UndesiredContacts",
+            params={
+                "threshold": 1.0,
+                "undesired_contacts_body_names": (
+                    "^(?!contact_foot_center_L$)(?!contact_foot_center_R$)"
+                    "(?!left_wrist_roll_link$)(?!right_wrist_roll_link$)"
+                    "(?!left_ankle_roll_link$)(?!right_ankle_roll_link$).+$"
+                ),
+            },
+            weight=-0.05,  # from -0.1
+        ),
+    }
+)
+
+hu_d04_29dof_wbt_fast_sac_reward = hu_d04_31dof_wbt_fast_sac_reward
+
+__all__ = [
+    "hu_d04_31dof_wbt_reward",
+    "hu_d04_29dof_wbt_reward",
+    "hu_d04_31dof_wbt_fast_sac_reward",
+    "hu_d04_29dof_wbt_fast_sac_reward",
+]

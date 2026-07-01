@@ -75,7 +75,7 @@ hu_d04_31dof_wbt_fast_sac = ExperimentConfig(
     randomization=hu_d04_randomization.hu_d04_31dof_wbt_randomization,
     command=hu_d04_command.hu_d04_31dof_wbt_command,
     curriculum=hu_d04_curriculum.hu_d04_31dof_wbt_curriculum,
-    reward=hu_d04_reward.hu_d04_31dof_wbt_reward,
+    reward=hu_d04_reward.hu_d04_31dof_wbt_fast_sac_reward,
 )
 
 hu_d04_29dof_wbt_fast_sac = replace(
@@ -100,7 +100,7 @@ hu_d04_29dof_wbt_fast_sac = replace(
     randomization=hu_d04_randomization.hu_d04_29dof_wbt_randomization,
     command=hu_d04_command.hu_d04_29dof_wbt_command,
     curriculum=hu_d04_curriculum.hu_d04_29dof_wbt_curriculum,
-    reward=hu_d04_reward.hu_d04_29dof_wbt_reward,
+    reward=hu_d04_reward.hu_d04_29dof_wbt_fast_sac_reward,
 )
 
 hu_d04_29dof_wbt_fast_sac_climb = replace(
