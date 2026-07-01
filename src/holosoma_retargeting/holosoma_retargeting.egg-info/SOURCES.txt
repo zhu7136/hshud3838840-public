@@ -21,6 +21,7 @@ holosoma_retargeting/config_values/data_type.py
 holosoma_retargeting/config_values/robot.py
 holosoma_retargeting/config_values/viser.py
 holosoma_retargeting/data_conversion/convert_data_format_mj.py
+holosoma_retargeting/data_conversion/convert_g1_to_hu_d04.py
 holosoma_retargeting/data_conversion/viser_body_vel_player.py
 holosoma_retargeting/data_utils/extract_global_positions.py
 holosoma_retargeting/data_utils/prep_amass_smplx_for_rt.py

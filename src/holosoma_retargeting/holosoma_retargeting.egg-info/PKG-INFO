@@ -5,7 +5,7 @@ Summary: Retargeting utilities for converting human motions to robot motions.
 Author: Amazon FAR Team
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
-Requires-Dist: numpy==2.3.5
+Requires-Dist: numpy<2.4,>=1.26
 Requires-Dist: torch
 Requires-Dist: tqdm
 Requires-Dist: scipy

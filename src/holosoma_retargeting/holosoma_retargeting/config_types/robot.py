@@ -18,6 +18,7 @@ class RobotDefaults(TypedDict):
 _ROBOT_DEFAULTS: dict[str, RobotDefaults] = {
     "g1": {"robot_dof": 29, "robot_height": 1.32, "object_name": "ground"},
     "t1": {"robot_dof": 23, "robot_height": 1.2, "object_name": "ground"},
+    "hu_d04": {"robot_dof": 29, "robot_height": 1.05, "object_name": "ground"},
 }
 
 
@@ -154,6 +155,15 @@ class RobotConfig:
                 "left_foot_sphere_5_link",
                 "right_foot_sphere_5_link",
             ]
+        if self.robot_type == "hu_d04":
+            return [
+                "contact_foot_heel_L",
+                "contact_foot_center_L",
+                "contact_foot_tip_L",
+                "contact_foot_heel_R",
+                "contact_foot_center_R",
+                "contact_foot_tip_R",
+            ]
         raise ValueError(f"Invalid robot type: {self.robot_type}")
 
     FOOT_STICKING_LINKS = property(
@@ -179,6 +189,22 @@ class RobotConfig:
                     "33": -0.1,  # left wrist
                     "34": -0.1,
                     "35": -0.05,
+                }
+            )
+        elif self.robot_type == "hu_d04":
+            # hu_d04_29dof qpos: [base(7), leg(12), waist(3: 19,20,21),
+            #                     left_arm(7: 22-28), right_arm(7: 29-35)]
+            # wrist order in hu_d04: yaw, pitch, roll
+            base.update(
+                {
+                    "20": -0.3,  # waist roll
+                    "21": -0.1,  # waist pitch
+                    "26": -0.1,  # left wrist yaw
+                    "27": -0.1,  # left wrist pitch
+                    "28": -0.05,  # left wrist roll
+                    "33": -0.1,  # right wrist yaw
+                    "34": -0.1,  # right wrist pitch
+                    "35": -0.05,  # right wrist roll
                 }
             )
 
@@ -207,6 +233,20 @@ class RobotConfig:
                     "35": 0.05,
                 }
             )
+        elif self.robot_type == "hu_d04":
+            base.update(
+                {
+                    "20": 0.3,  # waist roll
+                    "25": 1.4,  # left elbow
+                    "26": 0.2,  # left wrist yaw
+                    "27": 0.3,  # left wrist pitch
+                    "28": 0.05,  # left wrist roll
+                    "32": 1.4,  # right elbow
+                    "33": 0.2,  # right wrist yaw
+                    "34": 0.3,  # right wrist pitch
+                    "35": 0.05,  # right wrist roll
+                }
+            )
 
         return base
 
@@ -218,6 +258,8 @@ class RobotConfig:
             return self.manual_cost
 
         if self.robot_type == "g1":
+            return {"19": 0.2, "20": 0.2}  # waist yaw, waist roll
+        if self.robot_type == "hu_d04":
             return {"19": 0.2, "20": 0.2}  # waist yaw, waist roll
         return {}
 
@@ -232,6 +274,9 @@ class RobotConfig:
             return np.arange(19)
         if self.robot_type == "t1":
             return np.concatenate([np.arange(7), np.arange(11, 23)])
+        if self.robot_type == "hu_d04":
+            # base(7) + legs(12) = 19, same as g1 (waist not included in nominal tracking)
+            return np.arange(19)
         # Default: return empty array if robot type not defined (nominal tracking not used)
         return np.array([], dtype=int)
 

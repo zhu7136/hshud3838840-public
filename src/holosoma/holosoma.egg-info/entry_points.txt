@@ -1,3 +1,4 @@
 [holosoma.bridge]
 booster = holosoma.bridge.booster:BoosterSdk2Bridge
+sim2sim = holosoma.bridge.sim2sim:Sim2SimBridge
 unitree = holosoma.bridge.unitree:UnitreeSdk2Bridge

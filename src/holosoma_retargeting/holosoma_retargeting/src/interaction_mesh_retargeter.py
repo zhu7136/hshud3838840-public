@@ -646,8 +646,8 @@ class InteractionMeshRetargeter:
                     raise ValueError("foot_sticking must include one left* and one right* key")
 
                 for key, J_WF in J_WF_dict.items():
-                    apply_left = ("left" in key) and foot_sticking[left_key]
-                    apply_right = ("right" in key) and foot_sticking[right_key]
+                    apply_left = ("left" in key or key.endswith("_L")) and foot_sticking[left_key]
+                    apply_right = ("right" in key or key.endswith("_R")) and foot_sticking[right_key]
                     if apply_left or apply_right:
                         p_lb = p_WF_t_last_dict[key] - p_WF_dict[key] - self.foot_sticking_tolerance
                         p_ub = p_lb + 2 * self.foot_sticking_tolerance  # symmetric window
@@ -753,9 +753,9 @@ class InteractionMeshRetargeter:
         """Check whether a foot link is locked by configured frame windows."""
         key_lower = foot_link_key.lower()
         side = None
-        if "left" in key_lower:
+        if "left" in key_lower or key_lower.endswith("_l"):
             side = "left"
-        elif "right" in key_lower:
+        elif "right" in key_lower or key_lower.endswith("_r"):
             side = "right"
         if side is None:
             return False

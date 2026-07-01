@@ -8,11 +8,11 @@ setup(
     packages=find_packages(),
     python_requires=">=3.10",
     install_requires=[
-        # Needs to ping numpy to 2.3.5;
-        # reason: later numpy version such as 2.4 will trigger
-        # "TypeError: only 0-dimensional arrays can be converted to Python scalars"
-        # in yourdf/urdf.py::1078 when converting float(q)
-        "numpy==2.3.5",
+        # Allow numpy 1.26.x (for isaacsim/isaaclab envs) up to <2.4.
+        # reason: numpy 2.4+ triggers "TypeError: only 0-dimensional arrays can
+        # be converted to Python scalars" in yourdf/urdf.py::1078 when
+        # converting float(q). numpy 1.26.x and 2.0-2.3 are unaffected.
+        "numpy>=1.26,<2.4",
         "torch",
         "tqdm",
         "scipy",

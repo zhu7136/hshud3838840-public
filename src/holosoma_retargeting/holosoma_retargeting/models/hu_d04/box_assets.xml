@@ -1,0 +1,8 @@
+<mujocoinclude>
+    <mesh name="box1" file="/workspace/holosoma/OmniRetarget_Dataset/models/terrain/climb_14/box_models/box1.obj"
+        scale="0.7415730337078652 0.7415730337078652 0.7415730337078652"/>
+    <mesh name="box2" file="/workspace/holosoma/OmniRetarget_Dataset/models/terrain/climb_14/box_models/box2.obj"
+        scale="0.7415730337078652 0.7415730337078652 0.7415730337078652"/>
+    <material name="box1_material" rgba="0.3 0.7 0.9 0.5"/>
+    <material name="box2_material" rgba="0.7 0.3 0.9 0.5"/>
+</mujocoinclude>
