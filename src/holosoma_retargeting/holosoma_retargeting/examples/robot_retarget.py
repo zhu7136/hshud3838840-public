@@ -150,8 +150,8 @@ def validate_config(cfg: RetargetingConfig) -> None:
         )
 
     # Task-specific format requirements
-    if cfg.task_type == "climbing" and cfg.data_format not in (None, "mocap"):
-        raise ValueError("Climbing task requires 'mocap' data format")
+    if cfg.task_type == "climbing" and cfg.data_format not in (None, "mocap", "lafan"):
+        raise ValueError("Climbing task requires 'mocap' or 'lafan' data format")
     if cfg.task_type == "object_interaction" and cfg.data_format not in (None, "smplh"):
         raise ValueError("Object interaction requires 'smplh' data format")
     # robot_only accepts any format in the registry (already validated above)
@@ -268,8 +268,9 @@ def load_motion_data(
             raise FileNotFoundError(f"No .npy file found in {task_dir}")
 
         npy_file = npy_files[0]
-        # MOCAP-specific downsample factor
-        downsample = 4
+        # MOCAP-specific downsample factor (raw mocap is 90fps, downsample to ~22.5fps)
+        # LAFAN data is typically already at ~30fps, no downsample needed
+        downsample = 4 if data_format == "mocap" else 1
         human_joints = np.load(str(npy_file))[::downsample]
         num_frames = human_joints.shape[0]
         object_poses = np.tile(np.array([[1, 0, 0, 0, 0, 0, 0]]), (num_frames, 1))

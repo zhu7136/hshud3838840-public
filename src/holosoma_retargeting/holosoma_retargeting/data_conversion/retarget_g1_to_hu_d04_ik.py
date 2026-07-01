@@ -28,22 +28,24 @@ import numpy as np
 # so exact match is impossible — they provide directional guidance only).
 BODY_MAPPING = [
     # (g1_body, hu_d04_body, weight)
+    # Track JOINT CENTERS (not end-effector tips) to avoid forcing joints to
+    # compensate for differing foot/hand geometry between G1 and hu_d04.
+    # Use MODERATE weights on ankles (not high) to prevent hip_yaw compensation
+    # for hip-width differences.
     ("pelvis", "base_link", 5.0),                              # root position
-    ("left_hip_roll_link", "left_hip_roll_link", 0.3),
-    ("left_knee_link", "left_knee_link", 0.3),
-    ("left_ankle_roll_link", "left_ankle_roll_link", 0.3),
-    ("left_ankle_roll_sphere_5_link", "contact_foot_tip_L", 5.0),   # left foot tip
-    ("right_hip_roll_link", "right_hip_roll_link", 0.3),
-    ("right_knee_link", "right_knee_link", 0.3),
-    ("right_ankle_roll_link", "right_ankle_roll_link", 0.3),
-    ("right_ankle_roll_sphere_5_link", "contact_foot_tip_R", 5.0),  # right foot tip
-    ("torso_link", "waist_pitch_link", 0.5),
+    ("left_hip_roll_link", "left_hip_roll_link", 1.0),
+    ("left_knee_link", "left_knee_link", 1.0),
+    ("left_ankle_roll_link", "left_ankle_roll_link", 2.0),     # ankle joint center
+    ("right_hip_roll_link", "right_hip_roll_link", 1.0),
+    ("right_knee_link", "right_knee_link", 1.0),
+    ("right_ankle_roll_link", "right_ankle_roll_link", 2.0),   # ankle joint center
+    ("torso_link", "waist_pitch_link", 1.0),
     ("left_shoulder_roll_link", "left_shoulder_roll_link", 0.5),
     ("left_elbow_link", "left_elbow_link", 0.3),
-    ("left_sphere_hand_link", "left_hand_manip", 3.0),              # left hand
+    ("left_wrist_roll_link", "left_wrist_roll_link", 0.5),     # wrist joint center
     ("right_shoulder_roll_link", "right_shoulder_roll_link", 0.5),
     ("right_elbow_link", "right_elbow_link", 0.3),
-    ("right_sphere_hand_link", "right_hand_manip", 3.0),            # right hand
+    ("right_wrist_roll_link", "right_wrist_roll_link", 0.5),   # wrist joint center
 ]
 
 # hu_d04 31dof model: head joints at qpos indices 22, 23 (fixed to 0)
@@ -116,10 +118,17 @@ def solve_ik_frame(
         if max_err < tol:
             break
 
-        # Damped least squares
-        damping = 1e-3
-        JJt = J @ J.T + damping * np.eye(J.shape[0])
-        dq = J.T @ np.linalg.solve(JJt, e)  # (32,)
+        # Damped least squares (higher damping for stability, prevents extreme joints)
+        # Add regularization toward q_init (warm start) to prevent extreme compensation
+        # for geometric differences (hip width, shoulder position) between G1 and hu_d04.
+        damping = 1e-2
+        reg_weight = 0.5  # pull toward q_init
+        q_prior = q_init[ik_qpos_indices] - q[ik_qpos_indices]  # (32,)
+        # Augment: [J; reg*I] @ dq = [e; reg*q_prior]
+        J_aug = np.vstack([J, reg_weight * np.eye(len(ik_dof_indices))])
+        e_aug = np.concatenate([e, reg_weight * q_prior])
+        JJt = J_aug @ J_aug.T + damping * np.eye(J_aug.shape[0])
+        dq = J_aug.T @ np.linalg.solve(JJt, e_aug)  # (32,)
 
         # Trust region
         max_dq = np.max(np.abs(dq))
