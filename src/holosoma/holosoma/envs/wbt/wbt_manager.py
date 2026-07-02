@@ -134,6 +134,9 @@ class WholeBodyTrackingManager(BaseTask):
 
     def _draw_debug_vis_isaacsim(self):
         motion_command = self.command_manager.get_state("motion_command")
+        # Skip visualization if markers not set up (e.g., headless mode)
+        if not hasattr(motion_command, "visualization_markers"):
+            return
         # torso link
         real_robot_pos_xyz = motion_command.robot_ref_pos_w.clone()
         real_robot_quat_xyzw = motion_command.robot_ref_quat_w.clone()

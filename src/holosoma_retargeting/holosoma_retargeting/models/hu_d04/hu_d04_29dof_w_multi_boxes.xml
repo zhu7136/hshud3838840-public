@@ -48,6 +48,8 @@
     <mesh name="waist_yaw_link" file="waist_yaw_link.STL"/>
     <mesh name="waist_roll_link" file="waist_roll_link.STL"/>
     <mesh name="waist_pitch_link" file="waist_pitch_link.STL"/>
+    <mesh name="head_yaw_link" file="neck_yaw_link.STL"/>
+    <mesh name="head_pitch_link" file="neck_pitch_link.STL"/>
     <mesh name="waist_A_link" file="waist_A_link.STL"/>
     <mesh name="waist_A_rod_link" file="waist_A_rod_link.STL"/>
     <mesh name="waist_B_link" file="waist_B_link.STL"/>
@@ -207,6 +209,16 @@
             <geom type="capsule" pos="-0.006 0 0.25681" size="0.11 0.055" euler="1.57 0 0" />
             <geom type="capsule" pos="-0.03 0 0.07" size="0.06 0.06" euler="1.57 0 0" />
             <geom type="capsule" pos="0.065 0 0.1" size="0.03 0.05" euler="1.57 0 0" />
+
+            <!-- head (fixed bodies, joints removed for 29dof; kept for body count parity with holosoma hu_d04.xml) -->
+            <body name="head_yaw_link" pos="-0.013 0 0.3882">
+              <inertial pos="-7e-05 0.002132 0.037884" quat="0.990388 0.0534065 -0.0629858 0.110957" mass="0.35819" diaginertia="0.000163282 0.000162189 0.000145528"/>
+              <geom type="mesh" class="visual" rgba="0.75294 0.75294 0.75294 1" mesh="head_yaw_link"/>
+              <body name="head_pitch_link" pos="0 0 0.0395">
+                <inertial pos="0.010255 -0.000319 0.069397" quat="0.552937 0.549111 -0.444832 0.441432" mass="0.776041" diaginertia="0.00353783 0.00260718 0.00233699"/>
+                <geom type="mesh" class="visual" rgba="0.75294 0.75294 0.75294 1" mesh="head_pitch_link"/>
+              </body>
+            </body>
 
             <!-- left arm -->
             <body name="left_shoulder_pitch_link" pos="0 0.1589 0.2822">
